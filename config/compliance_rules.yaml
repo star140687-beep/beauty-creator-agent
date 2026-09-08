@@ -1,0 +1,17 @@
+rules:
+  - id: ABSOLUTE_001
+    pattern: "100%有效|百分之百有效|绝对有效"
+    severity: high
+    category: absolute_claim
+    message: "禁止绝对化功效承诺"
+  - id: MEDICAL_001
+    pattern: "治疗痘痘|彻底治愈|根治|药到病除"
+    severity: high
+    category: medical_claim
+    message: "化妆品内容不得作医疗或治愈宣称"
+  - id: EXPERIENCE_001
+    pattern: "我用了以后|亲测有效|我亲自用了"
+    severity: medium
+    category: fabricated_experience
+    message: "AI 不得伪装真实个人使用体验"
+

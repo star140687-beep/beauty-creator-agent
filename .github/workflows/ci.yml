@@ -16,8 +16,6 @@ jobs:
       - run: uv run ruff check src tests scripts migrations frontend
       - run: uv run mypy src tests
       - run: uv run pytest
-        env:
-          LLM_PROVIDER: fake
   secrets:
     runs-on: ubuntu-latest
     steps:

@@ -1,0 +1,11 @@
+{
+  "name": "Open Beauty Facts demonstration snapshot",
+  "provider": "Open Beauty Facts contributors",
+  "homepage": "https://world.openbeautyfacts.org/",
+  "license": "ODbL-1.0",
+  "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "retrieval_method": "scripts/download_openbeautyfacts.py",
+  "contains_personal_data": false,
+  "intended_use": "Local product-research demonstration; not manufacturer verification"
+}
+

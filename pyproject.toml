@@ -1,0 +1,59 @@
+[project]
+name = "beauty-creator-agent"
+version = "0.1.0"
+description = "Evidence-grounded beauty content creation agent"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.13,<2",
+    "fastapi>=0.115,<1",
+    "httpx>=0.27,<1",
+    "langchain-core>=0.3,<2",
+    "langchain-openai>=0.3,<2",
+    "langgraph>=0.2,<2",
+    "langgraph-checkpoint-postgres>=3,<4",
+    "pgvector>=0.3,<1",
+    "psycopg[binary]>=3.2,<4",
+    "pydantic>=2.9,<3",
+    "pydantic-settings>=2.5,<3",
+    "sqlalchemy>=2.0,<3",
+    "structlog>=24.4,<26",
+    "streamlit>=1.40,<2",
+    "tenacity>=9,<10",
+    "uvicorn[standard]>=0.30,<1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11,<2",
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.24,<1",
+    "respx>=0.21,<1",
+    "ruff>=0.8,<1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/beauty_creator_agent"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["beauty_creator_agent"]
+mypy_path = "src"

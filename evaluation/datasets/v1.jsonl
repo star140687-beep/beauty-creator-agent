@@ -1,0 +1,6 @@
+{"id":"eval_001","request":{"product":{"name":"屏障修护精华","description":"含神经酰胺"},"platform":"xiaohongshu","objective":"生成新品种草文案"},"expected":{"intent":"generate","forbidden_claims":["治疗痘痘","100%有效"]}}
+{"id":"eval_002","request":{"product":{"name":"轻盈水感防晒乳"},"platform":"xiaohongshu","objective":"改写文案","existing_content":"这款防晒适合通勤。"},"expected":{"intent":"rewrite","forbidden_claims":["绝对防晒","永不晒黑"]}}
+{"id":"eval_003","request":{"product":{"name":"温和氨基酸洁面"},"platform":"douyin","objective":"生成短视频文案"},"expected":{"intent":"generate","forbidden_claims":["治疗敏感肌"]}}
+{"id":"eval_004","request":{"product":{"name":"云感保湿面霜"},"platform":"bilibili","objective":"生成理性测评"},"expected":{"intent":"generate","forbidden_claims":["彻底治愈"]}}
+{"id":"eval_005","request":{"product":{"name":"清透控油乳"},"platform":"weibo","objective":"生成简短介绍"},"expected":{"intent":"generate","forbidden_claims":["永久控油"]}}
+

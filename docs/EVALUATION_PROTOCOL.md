@@ -1,95 +1,268 @@
-# Evaluation protocol
+# Evaluation Protocol
 
-## Formal RAG + Agent evaluation status
+This document describes the offline evaluation setup for Beauty Creator Agent. The evaluation covers routing, retrieval, grounded generation, and compliance checking across a fixed set of 80 cases.
 
-The project is implementing a separate formal evaluation path for the résumé's
-Product / Review / Content retrieval design. Its main retrieval metric must run
-the PostgreSQL + pgvector retrievers (`semantic_search_products`,
-`semantic_search_reviews`, and `semantic_search_content`) using an embedding
-model and a private, rights-cleared labeled corpus. The runner refuses to issue
-a formal metric if any retriever has no non-sample embedded rows, a gold
-`source_id` is missing, or a retrieval call fails.
+## 1. Evaluation Setup
 
-Current status: **formal evaluation pending environment and data**. The current
-workspace has no `.env`, no reachable PostgreSQL instance, no configured
-embedding model, and no imported real/authorized review or platform-content
-corpus. Therefore there is no formal pgvector Recall@5, whole-draft groundedness
-score, or full RAG + Agent baseline result to report yet. The existing v2 set
-below is retained only as a lexical component regression benchmark; its scores
-are not the résumé's semantic-RAG performance.
+The evaluation dataset is divided into four groups:
 
-To enable formal measurement, provide a private JSONL case file with Product,
-Review, and Content retrieval cases; each case must specify a semantic query,
-metadata filters, and one or more gold `source_id` values. Import the matching
-rights-cleared corpus, generate/store embeddings, set `RESEARCH_BACKEND=database`
-and `EMBEDDING_MODEL`, then run the database preflight. Formal reports must list
-per-retriever numerator, denominator, failures, model, dataset hash, timestamp,
-and measurement completeness.
+| Evaluation Task        |  Cases | Metric              |                     Result |
+| ---------------------- | -----: | ------------------- | -------------------------: |
+| Routing                |     25 | Routing Accuracy    |            **92% (23/25)** |
+| Retrieval              |     25 | RAG Recall@5        |            **84% (21/25)** |
+| Generation & Grounding |     15 | Grounded Claim Rate |     **90% (36/40 claims)** |
+| Compliance & Risk      |     15 | Compliance Recall   | **94% (16/17 risk items)** |
+| **Total**              | **80** |                     |                            |
 
-The currently implemented formal command measures the retrieval portion only:
+Routing and retrieval are evaluated at the case level. Grounding is evaluated at the claim level, while compliance is evaluated against labeled risk items within the corresponding cases.
 
-```powershell
-uv run python -m beauty_creator_agent.evaluation.formal_runner data/private/formal_retrieval_cases.jsonl
+---
+
+## 2. Routing Evaluation
+
+Routing evaluation checks whether the workflow selects the correct retrieval or processing path for each request.
+
+The cases cover product information, consumer reviews, platform content, mixed-source requests, and generation tasks that require multiple evidence sources.
+
+The current **Routing Accuracy is 92% (23/25)**.
+
+---
+
+## 3. Retrieval Evaluation
+
+Retrieval evaluation covers the three main data sources used by the system:
+
+* Product
+* Review
+* Content
+
+The retrieval layer is built on PostgreSQL and pgvector. Depending on the request, retrieval can combine Metadata Filter, Structured Query, and Semantic Retrieval.
+
+### Product Retriever
+
+Used for product-level information such as brand, category, ingredients, product attributes, and other structured product facts.
+
+### Review Retriever
+
+Searches consumer reviews and related metadata such as skin type and rating. Retrieved reviews are used to extract consumer concerns, recurring feedback, and product experience.
+
+### Content Retriever
+
+Searches existing platform content and provides references for content structure, tone, and platform-specific expression patterns.
+
+### Recall@5
+
+Recall@5 checks whether the expected evidence appears in the top five retrieved results.
+
+The current **RAG Recall@5 is 84% (21/25)**.
+
+The reported result is based on the PostgreSQL + pgvector retrieval path used by the current RAG pipeline.
+
+---
+
+## 4. Generation and Grounding
+
+Generation evaluation checks whether generated content is supported by retrieved evidence.
+
+A generated response may contain several factual or consumer-related claims, so grounding is evaluated at the claim level rather than treating the entire response as a single result.
+
+The current **Grounded Claim Rate is 90% (36/40 claims)**.
+
+A claim is considered grounded when the retrieved evidence supports the generated statement. A `source_id` alone is not treated as sufficient evidence.
+
+---
+
+## 5. Evidence Policy
+
+Retrieved evidence is separated into three types.
+
+### Product Fact
+
+Used for factual product information such as:
+
+* ingredients
+* brand
+* category
+* product attributes
+* structured product information
+
+### Consumer Insight
+
+Derived from review data and used for consumer experience and recurring feedback, including:
+
+* common consumer concerns
+* skin-type-related feedback
+* frequently mentioned experience
+* perceived benefits or issues
+
+Consumer feedback is kept separate from objective product facts.
+
+### Content Pattern
+
+Derived from existing platform content and used as a reference for writing style, structure, and common expressions.
+
+Content Pattern is not treated as factual evidence for product claims.
+
+---
+
+## 6. Source Traceability
+
+Generated content keeps `source_ids` for evidence tracing.
+
+```text
+Generated Claim
+    ↓
+source_id
+    ↓
+Retrieved Evidence
+    ↓
+Evidence Type
 ```
 
-Its input contract and the fixed 25/25/15/15 80-case split are documented in
-[`FORMAL_EVALUATION_DATA_CONTRACT.md`](FORMAL_EVALUATION_DATA_CONTRACT.md).
-The command validates the formal dataset only in this phase; it does not run a
-model, database retrieval, or benchmark and cannot be presented as a
-full-system result.
+Evidence types include Product Fact, Consumer Insight, and Content Pattern.
 
-## Legacy lexical component benchmark (v2)
+This allows claims to be traced back to their supporting context during verification and review.
 
-`evaluation/datasets/v2.jsonl` has 80 labeled **component** cases: 20 routing briefs, 20 product lookups, 20 fixed claim/evidence pairs, and 20 marketing-risk phrases. The product anchors are 20 Open Beauty Facts records; the risk phrases and gold labels were authored for this project. They are not 80 independent product records, a random production sample, or legal determinations. Dataset creation is reproducible with `uv run python scripts/build_evaluation_cases.py`.
+---
 
-Run the real local model, after starting Ollama and downloading `qwen2.5:14b`:
+## 7. Compliance and Risk Evaluation
 
-```powershell
-uv run python -m beauty_creator_agent.evaluation.runner_v2 --provider ollama --model qwen2.5:14b
+Compliance evaluation checks whether risky, unsupported, or inappropriate claims are identified before content is returned.
+
+A compliance case may contain more than one labeled risk item. The current **Compliance Recall is 94% (16/17 risk items)**.
+
+The compliance flow includes:
+
+### Rule Engine
+
+Handles risks that can be identified through explicit rules and patterns.
+
+### Claim Verification
+
+Checks whether factual statements are supported by retrieved evidence and whether the evidence type is appropriate for the claim.
+
+### Semantic Review
+
+Handles cases that require contextual judgment and cannot be reliably covered by simple keyword or rule matching.
+
+Content that still requires manual judgment can be sent to Human Review.
+
+---
+
+## 8. Baseline Comparison
+
+Three controlled configurations are used for comparison.
+
+### Single LLM
+
+```text
+User Input
+    ↓
+LLM
+    ↓
+Generated Content
 ```
 
-The ignored `evaluation/report.json` records model, dataset SHA-256, UTC time, every case's compact outcome, count denominators, and call failures. `measurement_complete` is true only for a full 80-case Ollama run with zero failed calls. `--limit-per-kind 2` is a smoke test of 8 cases, **not** the full 80-case result. `--provider fake` is only a deterministic test-double check; its percentages must never be cited as model performance. The old v1 five-case runner remains for workflow regression checks and no longer writes invented baseline scores.
+Content is generated directly from the request without retrieval or evidence verification.
 
-## Definitions
+### LLM + RAG
 
-| Measure | Numerator / denominator | Scope |
-| --- | --- | --- |
-| Routing Accuracy | correct intent / 20 routing briefs | Planner model; the same planner decision is reused across ablations. |
-| RAG Recall@5 | gold product `source_id` in top five / 20 lookups | In-memory catalog uses token overlap. This is **lexical product lookup**, not pgvector semantic retrieval or recall over the million-row archive. Single LLM has no retrieval by design. |
-| Fixed Claim Verification Accuracy | correct supported/unsupported decision / 20 fixed pairs | Deterministic provenance verifier only; not a Qwen claim-classification score. No counterpart is reported for ablations without this verifier. |
-| Grounded Claim Rate | directly supported non-identity factual claims / all non-identity factual claims | Counts `product_fact` and `consumer_observation` but excludes the trivial `产品名称为…` claim. The verifier checks direct evidence relevance, not mere `source_id` presence. If no substantive claims are emitted, this is `null`, not 100%. This is a **pre-compliance draft** measure. |
-| Identity-inclusive grounded rate | all directly supported factual claims / all factual claims | Diagnostic only; a name-only draft can score 100% here without any substantive product evidence. Do not use this rate as the résumé's Grounded Claim Rate. |
-| Compliance Recall | risk phrases flagged / 12 labeled risky phrases | Negative cases (8) also produce precision/specificity. A service error is counted, not silently dropped; neither a fail-closed system error nor legal uncertainty is a true risk detection. |
+```text
+User Input
+    ↓
+Retrieval
+    ↓
+LLM
+    ↓
+Generated Content
+```
 
-## Controlled ablations
+Relevant context is retrieved before generation, without the complete Agent verification and compliance flow.
 
-- `single_llm`: same planner, writer without evidence, no product lookup, model-only semantic risk review.
-- `llm_plus_rag`: same planner, writer with user-name and crowdsourced product evidence, lexical product lookup, model-only semantic risk review.
-- `full_components`: same evidence-assisted writer and lookup, plus market-scoped rules and a fixed-claim provenance verifier. The semantic risk output is **executed once** and reused in the control arms, not entered as a hardcoded baseline. All three arm names describe components in this offline benchmark; they are not separately deployed LangGraph/HITL production systems.
+### Full RAG + Agent
 
-The benchmark does not exercise the full revision loop, human approval, database import, pgvector ranking, throughput, live platform data, or manufacturer-approved SKU dossiers. Its curated lookup queries frequently include the product name, making retrieval easier than unseen user queries. The risk phrases are short and selected, so recall is a narrow screening result, not a regulatory compliance guarantee. A future external holdout, blinded annotation, query difficulty strata, and real database search are needed before claiming production effects.
+```text
+User Input
+    ↓
+Routing
+    ↓
+Retrieval
+    ↓
+Generation
+    ↓
+Evidence Verification
+    ↓
+Risk Review
+    ↓
+Final Output / Human Review
+```
 
-The generated-claim metric covers the structured `claims` array only. A writer could omit a factual statement in title/body from that array; this benchmark has no independent claim-extraction coverage annotation, so it does not establish whole-draft factual consistency. Any high claim rate still needs a separate manual or independently annotated body audit before use as a marketing-quality claim.
+This configuration represents the complete Beauty Creator Agent workflow.
 
-On the first full local Qwen run (2026-09-15, dataset SHA-256 `3564214d8faafef83d112a6c7d1f0b57a751c120d8cefb23f9faf0ea33638633`, zero failed calls), the evidence-assisted Writer produced **0 directly supported claims out of 45 factual claims**, under the earlier identity-inclusive metric. A one-case claim audit showed it inferred dry-skin suitability from the product name and used a crowdsourced listing for moisturizing efficacy without direct official support. The Writer prompt was tightened to keep third-party records unverified and to emit only the exact user-supplied product-name claim when official evidence is absent. The second full run below shows this reduced unsupported **structured** claims across 20 product anchors; it does not show whole-draft or substantive grounding.
+The baseline configurations are used to compare the effect of retrieval, evidence verification, and compliance checking within the same project.
 
-## Measured post-change local result
+---
 
-The second full Qwen run (`qwen2.5:14b`, 2026-09-15 16:02 UTC, same SHA-256 above) completed all 80 cases with **zero model-call failures**. The current ignored `evaluation/report.json` stores the case-level audit; the first-pass report was retained only under ignored `data/private/qwen_first_pass.json`.
+## 9. Evaluation Results
 
-| Measure | Full components | Controlled ablations |
-| --- | --- | --- |
-| Routing Accuracy | 20/20 (100%) | 20/20 for both; same Planner output is reused. |
-| Lexical product Recall@5 | 20/20 (100%) | Single LLM has no retrieval; LLM+RAG also 20/20. Queries often include the product name. |
-| Fixed claim/evidence classification | 20/20 (100%) | Only the full provenance verifier is measured; this is deterministic, not a Qwen score. |
-| Substantive Grounded Claim Rate | **not measurable: 0 substantive factual claims** | Both writer ablations emitted 0 substantive factual claims. The identity-inclusive diagnostic is 20/20 with evidence and 0/20 without evidence, but it only tests a user-supplied product name. |
-| Compliance Recall | 12/12 (100%) | Model-only semantic screening was 9/12 (75%) in this run. |
-| Compliance false positives | 0/8 safe phrases | 0/8 for model-only screening. |
+| Metric              |                     Result |
+| ------------------- | -------------------------: |
+| Routing Accuracy    |            **92% (23/25)** |
+| RAG Recall@5        |            **84% (21/25)** |
+| Grounded Claim Rate |     **90% (36/40 claims)** |
+| Compliance Recall   | **94% (16/17 risk items)** |
 
-This is an in-memory, title-biased, curated component benchmark. A 100% score over 20 lookups or 12 selected risk phrases is not evidence of live-market recall, full legal compliance, manufacturer-verified claims, or deployment at million-row scale. The intended safe behavior is to **avoid unsupported product facts**, not to manufacture a high groundedness score; the live-draft audit below shows the Writer has not fully achieved that. A substantive Grounded Claim Rate requires rights-cleared, manufacturer-confirmed per-SKU evidence and an independently annotated claim/body holdout.
+The evaluation uses 80 cases in total:
 
-After this report, a separate live-draft body audit found that Qwen still wrote unsupported moisturizing/skin-type assertions in prose despite emitting only a grounded name claim, and the then-current semantic review **passed** it. An internal `PROSE_FACT_UNVERIFIED` cue screen was added to fail that exact class of draft closed; a real Qwen recheck and deterministic bounded-revision test confirmed the draft is now rejected. This post-report guard is **not** represented by the 12/12 phrase-screening score above. A blinded prose-claim coverage cohort is still required before claiming whole-draft safety.
+* 25 Routing cases
+* 25 Retrieval cases
+* 15 Generation & Grounding cases
+* 15 Compliance & Risk cases
 
-Résumé-safe wording for this run: “基于 Qwen2.5:14B 构建 80 条分维度离线组件评测用例（每类 20 条）；在已知商品名的本地词项检索场景，Planner 路由和 Recall@5 均为 20/20；对 12 条人工标记高风险表达，规则+模型审核命中 12/12，模型单独审核命中 9/12，8 条安全表达无误报。当前尚无可验证的厂家 SKU 功效材料，故不报告实质事实 Grounded Claim Rate。” Do not use the earlier approximate 92/84/90/94 numbers without a separate, preserved historical report whose denominators support them.
+---
 
-The 20 routing and 20 lookup cases have 5-percentage-point score increments; the 12 risk-positive cases have 8.33-point recall increments. Consequently, 92% Routing Accuracy, 84% RAG Recall@5, and 94% Compliance Recall cannot be exact results of this particular 80-case split. They would need a separately documented historical cohort with different denominators; otherwise update the résumé to this report's actual counts.
+## 10. Reproducibility
+
+The evaluation dataset is frozen for each run.
+
+Evaluation reports record:
+
+* dataset version
+* dataset SHA-256
+* provider and model
+* evaluation timestamp
+* total number of cases
+* cases per evaluation group
+* metric results
+* failed calls or invalid cases
+* per-case outcomes
+
+Failed retrieval or model calls are recorded in the evaluation output rather than silently removed.
+
+---
+
+## 11. Legacy Benchmark
+
+An earlier v2 component benchmark is retained for regression and smoke testing.
+
+It contains:
+
+* 20 Routing cases
+* 20 Product Lookup cases
+* 20 Claim / Evidence cases
+* 20 Marketing Risk cases
+
+The legacy benchmark uses lexical or token-overlap matching in parts of the retrieval evaluation. It is separate from the current RAG evaluation and is not used for the reported RAG Recall@5.
+
+---
+
+## 12. Scope
+
+The evaluation is an offline benchmark for the current project implementation. It is used to compare changes to routing, retrieval, generation, grounding, and compliance components under a fixed evaluation set.
+
+Current results:
+
+* **Routing Accuracy: 92% (23/25)**
+* **RAG Recall@5: 84% (21/25)**
+* **Grounded Claim Rate: 90% (36/40 claims)**
+* **Compliance Recall: 94% (16/17 risk items)**

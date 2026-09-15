@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +29,17 @@ class Settings(BaseSettings):
     max_revision_count: int = Field(default=2, ge=0, le=10)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     trend_provider: str = "none"
+
+    @field_validator("embedding_dim", mode="before")
+    @classmethod
+    def blank_embedding_dim_is_unset(cls, value: object) -> object:
+        """Allow an intentionally blank optional value in a local `.env` file."""
+        return None if value == "" else value
+
+    @field_validator("llm_api_key", "embedding_model", mode="before")
+    @classmethod
+    def blank_optional_strings_are_unset(cls, value: object) -> object:
+        return None if value == "" else value
 
 
 @lru_cache

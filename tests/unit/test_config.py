@@ -15,3 +15,9 @@ def test_settings_have_safe_development_defaults() -> None:
 def test_settings_reject_invalid_revision_count() -> None:
     with pytest.raises(ValidationError):
         Settings.model_validate({"max_revision_count": -1})
+
+
+def test_blank_optional_embedding_dimension_is_treated_as_unset() -> None:
+    settings = Settings.model_validate({"embedding_dim": ""})
+
+    assert settings.embedding_dim is None

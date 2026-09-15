@@ -5,6 +5,7 @@ from beauty_creator_agent.schemas.compliance import ComplianceIssue, ComplianceR
 from beauty_creator_agent.schemas.content import ContentDraft, GeneratedClaim
 from beauty_creator_agent.schemas.evidence import EvidenceContext, EvidenceItem
 from beauty_creator_agent.schemas.planner import PlannerDecision
+from beauty_creator_agent.schemas.task import ProductInput, TaskCreate
 
 
 def test_mutable_defaults_are_not_shared() -> None:
@@ -79,4 +80,23 @@ def test_rewrite_plan_must_route_to_writer() -> None:
             needs_writer=False,
             needs_compliance=True,
             reasoning_summary="Rewrite requested",
+        )
+
+
+def test_task_market_defaults_to_cn_and_rejects_unknown_market() -> None:
+    request = TaskCreate(
+        product=ProductInput(name="A moisturizer"),
+        platform="xiaohongshu",
+        objective="Generate a post",
+    )
+
+    assert request.market == "CN"
+    with pytest.raises(ValidationError):
+        TaskCreate.model_validate(
+            {
+                "product": {"name": "A moisturizer"},
+                "platform": "xiaohongshu",
+                "objective": "Generate a post",
+                "market": "XX",
+            }
         )

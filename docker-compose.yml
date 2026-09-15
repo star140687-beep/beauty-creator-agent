@@ -19,6 +19,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://postgres:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/beauty_agent
       CHECKPOINT_BACKEND: postgres
+      RESEARCH_BACKEND: database
       LLM_PROVIDER: ollama
       LLM_BASE_URL: http://host.docker.internal:11434
       PLANNER_MODEL: qwen2.5:14b

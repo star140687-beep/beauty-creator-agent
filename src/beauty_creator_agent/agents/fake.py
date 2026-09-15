@@ -37,6 +37,11 @@ class FakeLLMProvider:
         revision_count = state.get("revision_count", 0)
         suffix = "（修订版）" if state.get("current_draft") else ""
         source_ids = [item.source_id for item in state.get("evidence", []) if item.source_id]
+        name_source_ids = [
+            item.source_id
+            for item in state.get("evidence", [])
+            if item.id == "user_product_name" and item.source_id
+        ]
         return ContentDraft(
             title=f"{request.product.name}体验重点{suffix}",
             body=(
@@ -48,7 +53,7 @@ class FakeLLMProvider:
                 GeneratedClaim(
                     text=f"产品名称为{request.product.name}",
                     claim_type="product_fact",
-                    source_ids=source_ids,
+                    source_ids=name_source_ids,
                 )
             ],
             source_ids=source_ids,

@@ -26,7 +26,10 @@ Request → Planner → Research Tools → Evidence → Writer → Compliance
 - Category insights cannot be presented as feedback about the current product.
 - Retrieved documents are untrusted data, never instructions.
 - Sample data is synthetic and must not be presented as market evidence.
-- The repository includes a small ODbL-licensed Open Beauty Facts product snapshot with per-record provenance. It remains crowdsourced evidence, not manufacturer verification.
+- The repository includes 163 ODbL-licensed Open Beauty Facts product records from 115 brands with per-record provenance. It remains crowdsourced evidence, not manufacturer verification.
+- A separate local multi-brand retailer archive has 8,494 valid product listings from 304 brands and 1,092,967 valid reviews from 142 brands. The public coverage file contains counts only; raw review text is not uploaded.
+- Five linked CN/US/EU regulatory reference records and market-scoped screening rules are included. They are not per-SKU efficacy approval data.
+- A private, generic product importer can onboard additional brands; it rejects claims without explicit per-claim document links and operator confirmation.
 
 ## Tech stack
 
@@ -80,10 +83,12 @@ The ingestion command upserts by `source_id`, so repeated runs do not duplicate 
 Refresh the licensed real-product snapshot with:
 
 ```powershell
-uv run python scripts/download_openbeautyfacts.py --per-category 5
+uv run python scripts/download_openbeautyfacts.py --per-category 50
 ```
 
-See `docs/DATA_SOURCES.md` for attribution and the local-only review import policy.
+See `docs/DATA_SOURCES.md` for attribution and the local-only review import policy, and `docs/COMPLIANCE_DATA.md` for the limits of source-backed compliance screening.
+
+For the separately supplied multi-brand retailer dataset, the streaming adapter validated 8,494 product listings across 304 brands and 1,092,967 reviews across 142 brands without importing them into the running database. See `docs/PRODUCTION_DATA.md` for staged, idempotent PostgreSQL import and the `RESEARCH_BACKEND=database` setting. These counts indicate available local data, **not production readiness**.
 
 ## Docker
 
@@ -101,13 +106,13 @@ The API container reaches the host Ollama service through `host.docker.internal`
 
 ## Evaluation
 
-Evaluation is separate from the production workflow and operates on fixed JSONL cases:
+The reproducible 80-case component benchmark can use the running local Qwen model:
 
 ```powershell
-uv run python -m beauty_creator_agent.evaluation.runner
+uv run python -m beauty_creator_agent.evaluation.runner_v2 --provider ollama --model qwen2.5:14b
 ```
 
-It writes `evaluation/report.json` and `evaluation/report.csv` with planner accuracy, forbidden-claim absence, compliance completion, HITL reachability, and provenance coverage.
+It writes the ignored `evaluation/report.json` with model identity, SHA-256, per-case outcomes, actual controlled ablations and failure counts. A faster `--limit-per-kind 2` smoke run is not a full benchmark. The deterministic `--provider fake` check is not model evidence. See [metric definitions and limitations](docs/EVALUATION_PROTOCOL.md). The old five-case workflow regression remains available through `uv run python -m beauty_creator_agent.evaluation.runner`; it no longer reports fabricated baseline values.
 
 ## Quality checks
 
@@ -167,6 +172,6 @@ src/beauty_creator_agent/
 ## Current limitations and roadmap
 
 - Local development defaults to in-memory checkpoints. Docker enables PostgreSQL checkpoints, allowing a waiting thread to be recovered by `task_id` after an API process restart.
-- The included sample retriever is deterministic lexical search. pgvector models and Ollama embeddings are ready for a database-backed retriever adapter.
+- Development uses deterministic sample search. The optional PostgreSQL catalog supports bounded exact-name lookups for large real datasets; pgvector semantic retrieval remains future work.
 - Trend research is optional and disabled by default.
 - Sample data is intentionally small and synthetic.

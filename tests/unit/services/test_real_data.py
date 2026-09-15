@@ -11,7 +11,8 @@ def test_openbeautyfacts_snapshot_has_license_and_provenance() -> None:
     path = Path("data/openbeautyfacts/products.jsonl")
     records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
-    assert len(records) >= 20
+    assert len(records) >= 163
+    assert len({record["brand"] for record in records}) >= 115
     assert len({record["barcode"] for record in records}) == len(records)
     assert all(record["license"] == "ODbL-1.0" for record in records)
     assert all(record["source_id"].startswith("openbeautyfacts:") for record in records)

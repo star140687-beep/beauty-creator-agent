@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     app_env: Literal["development", "test", "production"] = "development"
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/beauty_agent"
     checkpoint_backend: Literal["memory", "postgres"] = "memory"
+    research_backend: Literal["sample", "database"] = "sample"
     llm_provider: Literal["ollama", "fake"] = "ollama"
     llm_base_url: str = "http://127.0.0.1:11434"
     llm_api_key: str | None = Field(default=None, repr=False)

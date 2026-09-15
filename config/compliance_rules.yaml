@@ -1,17 +1,75 @@
+# Source-backed screening rules, not a legal approval decision.
+# Official source URLs and dates were checked on 2026-09-15.
 rules:
   - id: ABSOLUTE_001
-    pattern: "100%有效|百分之百有效|绝对有效"
+    regulatory_source_id: cn-nmpa-2021-77
+    markets: [CN]
+    pattern: "100%有效|百分之百有效|绝对有效|保证有效|零风险"
     severity: high
     category: absolute_claim
-    message: "禁止绝对化功效承诺"
+    message: "避免绝对化的功效或安全保证；需要人工核对产品与广告语。"
+    source_kind: official
+    source_title: 化妆品标签管理办法
+    source_url: https://www.gov.cn/gbgl/bbb734277fe64ea99ef1547669063192/files/05886a5c1b6a4647a159adf25ed38bdd.pdf
+    basis: 第十九条第（二）、（十）项
+    effective_date: 2022-05-01
   - id: MEDICAL_001
-    pattern: "治疗痘痘|彻底治愈|根治|药到病除"
+    regulatory_source_id: cn-nmpa-2021-77
+    markets: [CN]
+    pattern: "治疗痤疮|彻底治愈|根治|药到病除|药妆|处方级"
     severity: high
     category: medical_claim
-    message: "化妆品内容不得作医疗或治愈宣称"
+    message: "疑似将化妆品宣传为具有医疗作用；需人工核对产品类别与宣称。"
+    source_kind: official
+    source_title: 化妆品标签管理办法
+    source_url: https://www.gov.cn/gbgl/bbb734277fe64ea99ef1547669063192/files/05886a5c1b6a4647a159adf25ed38bdd.pdf
+    basis: 第十九条第（一）项
+    effective_date: 2022-05-01
+  - id: CN_AUTHORITY_001
+    regulatory_source_id: cn-nmpa-2021-77
+    markets: [CN]
+    pattern: "国家药监局认证|国家药监局推荐|药监局认证"
+    severity: high
+    category: unverified_authority_claim
+    message: "监管机关背书或认证表达需核实，不能凭营销资料自动放行。"
+    source_kind: official
+    source_title: 化妆品标签管理办法
+    source_url: https://www.gov.cn/gbgl/bbb734277fe64ea99ef1547669063192/files/05886a5c1b6a4647a159adf25ed38bdd.pdf
+    basis: 第十九条第（八）、（九）项
+    effective_date: 2022-05-01
+  - id: US_DRUG_001
+    regulatory_source_id: us-fda-cosmetic-claims
+    markets: [US]
+    pattern: "\\b(?:cures?|treats?|prevents?)\\s+(?:acne|eczema|psoriasis)\\b|\\bregrows?\\s+hair\\b"
+    severity: high
+    category: drug_claim_review
+    message: "Potential drug claim: review US product classification and authorization."
+    source_kind: official
+    source_title: FDA Cosmetics Labeling Claims
+    source_url: https://www.fda.gov/cosmetics/cosmetics-labeling/cosmetics-labeling-claims
+    basis: Cosmetic versus drug intended-use guidance
+    effective_date: null
+  - id: EU_APPROVAL_001
+    regulatory_source_id: eu-reg-655-2013
+    markets: [EU]
+    pattern: "\\b(?:EU|European Commission)\\s+approved\\b|欧盟官方认证"
+    severity: high
+    category: authority_approval_claim
+    message: "A cosmetic claim must not imply approval by an EU competent authority."
+    source_kind: official
+    source_title: Commission Regulation (EU) No 655/2013
+    source_url: https://eur-lex.europa.eu/eli/reg/2013/655/oj/eng
+    basis: Annex, legal compliance criterion 1(1)
+    effective_date: 2013-07-11
   - id: EXPERIENCE_001
-    pattern: "我用了以后|亲测有效|我亲自用了"
+    regulatory_source_id: internal-ai-testimony-policy
+    markets: [CN, US, EU]
+    pattern: "我用了以后亲测有效|我亲自用了|\\bI (?:personally )?(?:tried|used) it\\b"
     severity: medium
     category: fabricated_experience
-    message: "AI 不得伪装真实个人使用体验"
-
+    message: "AI 不能冒充真实消费者的亲身体验。"
+    source_kind: internal_policy
+    source_title: Beauty Creator Agent content policy
+    source_url: null
+    basis: AI-generated testimony guardrail
+    effective_date: null

@@ -1,0 +1,1532 @@
+{
+  "dataset_url": "https://www.kaggle.com/datasets/nadyinky/sephora-products-and-skincare-reviews",
+  "license": "CC-BY-4.0",
+  "checked_at": "2026-09-15",
+  "records_published": "aggregate_counts_only",
+  "product_records": 8494,
+  "review_records": 1092967,
+  "product_brands": 304,
+  "review_brands": 142,
+  "brands": [
+    {
+      "brand": "19-69",
+      "product_records": 14,
+      "review_records": 0
+    },
+    {
+      "brand": "54 Thrones",
+      "product_records": 4,
+      "review_records": 0
+    },
+    {
+      "brand": "ABBOTT",
+      "product_records": 13,
+      "review_records": 0
+    },
+    {
+      "brand": "Acqua di Parma",
+      "product_records": 15,
+      "review_records": 0
+    },
+    {
+      "brand": "adwoa beauty",
+      "product_records": 19,
+      "review_records": 0
+    },
+    {
+      "brand": "AERIN",
+      "product_records": 24,
+      "review_records": 0
+    },
+    {
+      "brand": "Algenist",
+      "product_records": 33,
+      "review_records": 8730
+    },
+    {
+      "brand": "Alpha-H",
+      "product_records": 9,
+      "review_records": 1259
+    },
+    {
+      "brand": "alpyn beauty",
+      "product_records": 13,
+      "review_records": 2460
+    },
+    {
+      "brand": "ALTERNA Haircare",
+      "product_records": 45,
+      "review_records": 0
+    },
+    {
+      "brand": "Ami Colé",
+      "product_records": 9,
+      "review_records": 0
+    },
+    {
+      "brand": "amika",
+      "product_records": 49,
+      "review_records": 0
+    },
+    {
+      "brand": "Anastasia Beverly Hills",
+      "product_records": 95,
+      "review_records": 27
+    },
+    {
+      "brand": "Aquis",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Armani Beauty",
+      "product_records": 56,
+      "review_records": 0
+    },
+    {
+      "brand": "Artist Couture",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Atelier Cologne",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Augustinus Bader",
+      "product_records": 19,
+      "review_records": 2172
+    },
+    {
+      "brand": "Azzaro",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "bareMinerals",
+      "product_records": 22,
+      "review_records": 3727
+    },
+    {
+      "brand": "BeautyBio",
+      "product_records": 33,
+      "review_records": 1337
+    },
+    {
+      "brand": "beautyblender",
+      "product_records": 22,
+      "review_records": 0
+    },
+    {
+      "brand": "belif",
+      "product_records": 14,
+      "review_records": 22493
+    },
+    {
+      "brand": "Benefit Cosmetics",
+      "product_records": 74,
+      "review_records": 3536
+    },
+    {
+      "brand": "BERDOUES",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Bio Ionic",
+      "product_records": 13,
+      "review_records": 0
+    },
+    {
+      "brand": "Biossance",
+      "product_records": 25,
+      "review_records": 12350
+    },
+    {
+      "brand": "Blinc",
+      "product_records": 5,
+      "review_records": 0
+    },
+    {
+      "brand": "Bobbi Brown",
+      "product_records": 55,
+      "review_records": 4567
+    },
+    {
+      "brand": "Bon Parfumeur",
+      "product_records": 17,
+      "review_records": 0
+    },
+    {
+      "brand": "BondiBoost",
+      "product_records": 34,
+      "review_records": 0
+    },
+    {
+      "brand": "Boy Smells",
+      "product_records": 31,
+      "review_records": 0
+    },
+    {
+      "brand": "BREAD BEAUTY SUPPLY",
+      "product_records": 15,
+      "review_records": 0
+    },
+    {
+      "brand": "Briogeo",
+      "product_records": 56,
+      "review_records": 0
+    },
+    {
+      "brand": "Bumble and bumble",
+      "product_records": 110,
+      "review_records": 0
+    },
+    {
+      "brand": "BURBERRY",
+      "product_records": 26,
+      "review_records": 0
+    },
+    {
+      "brand": "Buxom",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "By Rosie Jane",
+      "product_records": 45,
+      "review_records": 0
+    },
+    {
+      "brand": "caliray",
+      "product_records": 12,
+      "review_records": 24
+    },
+    {
+      "brand": "Calvin Klein",
+      "product_records": 8,
+      "review_records": 0
+    },
+    {
+      "brand": "CANOPY",
+      "product_records": 3,
+      "review_records": 69
+    },
+    {
+      "brand": "Capri Blue",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Carolina Herrera",
+      "product_records": 19,
+      "review_records": 0
+    },
+    {
+      "brand": "Caudalie",
+      "product_records": 43,
+      "review_records": 20702
+    },
+    {
+      "brand": "CAY SKIN",
+      "product_records": 6,
+      "review_records": 785
+    },
+    {
+      "brand": "Ceremonia",
+      "product_records": 23,
+      "review_records": 0
+    },
+    {
+      "brand": "CHANEL",
+      "product_records": 46,
+      "review_records": 0
+    },
+    {
+      "brand": "Charlotte Tilbury",
+      "product_records": 99,
+      "review_records": 6512
+    },
+    {
+      "brand": "Chloé",
+      "product_records": 11,
+      "review_records": 0
+    },
+    {
+      "brand": "Christian Louboutin",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Christophe Robin",
+      "product_records": 3,
+      "review_records": 0
+    },
+    {
+      "brand": "Cinema Secrets",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "Clarins",
+      "product_records": 44,
+      "review_records": 5646
+    },
+    {
+      "brand": "CLEAN RESERVE",
+      "product_records": 24,
+      "review_records": 0
+    },
+    {
+      "brand": "CLINIQUE",
+      "product_records": 179,
+      "review_records": 48977
+    },
+    {
+      "brand": "COLOR WOW",
+      "product_records": 33,
+      "review_records": 0
+    },
+    {
+      "brand": "Commodity",
+      "product_records": 48,
+      "review_records": 0
+    },
+    {
+      "brand": "Community Sixty-Six",
+      "product_records": 9,
+      "review_records": 1018
+    },
+    {
+      "brand": "COOLA",
+      "product_records": 19,
+      "review_records": 2265
+    },
+    {
+      "brand": "Crown Affair",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Curlsmith",
+      "product_records": 51,
+      "review_records": 0
+    },
+    {
+      "brand": "dae",
+      "product_records": 18,
+      "review_records": 0
+    },
+    {
+      "brand": "DAMDAM",
+      "product_records": 8,
+      "review_records": 1128
+    },
+    {
+      "brand": "Dame",
+      "product_records": 11,
+      "review_records": 0
+    },
+    {
+      "brand": "Danessa Myricks Beauty",
+      "product_records": 24,
+      "review_records": 67
+    },
+    {
+      "brand": "Deborah Lippmann",
+      "product_records": 16,
+      "review_records": 0
+    },
+    {
+      "brand": "DedCool",
+      "product_records": 16,
+      "review_records": 0
+    },
+    {
+      "brand": "DEREK LAM 10 CROSBY",
+      "product_records": 3,
+      "review_records": 0
+    },
+    {
+      "brand": "DERMAFLASH",
+      "product_records": 5,
+      "review_records": 514
+    },
+    {
+      "brand": "Dermalogica",
+      "product_records": 51,
+      "review_records": 24410
+    },
+    {
+      "brand": "Dior",
+      "product_records": 136,
+      "review_records": 6149
+    },
+    {
+      "brand": "Dolce&Gabbana",
+      "product_records": 20,
+      "review_records": 0
+    },
+    {
+      "brand": "DOMINIQUE COSMETICS",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Donna Karan",
+      "product_records": 5,
+      "review_records": 0
+    },
+    {
+      "brand": "dpHUE",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Dr. Barbara Sturm",
+      "product_records": 43,
+      "review_records": 5994
+    },
+    {
+      "brand": "Dr. Brandt Skincare",
+      "product_records": 31,
+      "review_records": 4346
+    },
+    {
+      "brand": "Dr. Dennis Gross Skincare",
+      "product_records": 33,
+      "review_records": 14311
+    },
+    {
+      "brand": "Dr. Jart+",
+      "product_records": 42,
+      "review_records": 23969
+    },
+    {
+      "brand": "Dr. Lara Devgan Scientific Beauty",
+      "product_records": 10,
+      "review_records": 1421
+    },
+    {
+      "brand": "Dr. Zenovia Skincare",
+      "product_records": 13,
+      "review_records": 3314
+    },
+    {
+      "brand": "Drunk Elephant",
+      "product_records": 56,
+      "review_records": 42309
+    },
+    {
+      "brand": "Drybar",
+      "product_records": 72,
+      "review_records": 0
+    },
+    {
+      "brand": "DUO",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "EADEM",
+      "product_records": 3,
+      "review_records": 481
+    },
+    {
+      "brand": "Eight & Bob",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "Ellis Brooklyn",
+      "product_records": 38,
+      "review_records": 0
+    },
+    {
+      "brand": "Erno Laszlo",
+      "product_records": 3,
+      "review_records": 2
+    },
+    {
+      "brand": "Estée Lauder",
+      "product_records": 47,
+      "review_records": 17339
+    },
+    {
+      "brand": "Evian",
+      "product_records": 3,
+      "review_records": 2024
+    },
+    {
+      "brand": "Fable & Mane",
+      "product_records": 13,
+      "review_records": 0
+    },
+    {
+      "brand": "FaceGym",
+      "product_records": 19,
+      "review_records": 1013
+    },
+    {
+      "brand": "Farmacy",
+      "product_records": 30,
+      "review_records": 26462
+    },
+    {
+      "brand": "Fashion Fair",
+      "product_records": 9,
+      "review_records": 0
+    },
+    {
+      "brand": "Fenty Beauty by Rihanna",
+      "product_records": 82,
+      "review_records": 0
+    },
+    {
+      "brand": "Fenty Skin",
+      "product_records": 30,
+      "review_records": 4805
+    },
+    {
+      "brand": "First Aid Beauty",
+      "product_records": 42,
+      "review_records": 24262
+    },
+    {
+      "brand": "Flora + Bast",
+      "product_records": 4,
+      "review_records": 199
+    },
+    {
+      "brand": "Floral Street",
+      "product_records": 20,
+      "review_records": 0
+    },
+    {
+      "brand": "FOREO",
+      "product_records": 19,
+      "review_records": 1141
+    },
+    {
+      "brand": "FORVR Mood",
+      "product_records": 23,
+      "review_records": 0
+    },
+    {
+      "brand": "Freck Beauty",
+      "product_records": 11,
+      "review_records": 431
+    },
+    {
+      "brand": "fresh",
+      "product_records": 67,
+      "review_records": 40828
+    },
+    {
+      "brand": "ghd",
+      "product_records": 19,
+      "review_records": 0
+    },
+    {
+      "brand": "Gisou",
+      "product_records": 19,
+      "review_records": 81
+    },
+    {
+      "brand": "Givenchy",
+      "product_records": 38,
+      "review_records": 0
+    },
+    {
+      "brand": "Glamnetic",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "GLO Science",
+      "product_records": 6,
+      "review_records": 1271
+    },
+    {
+      "brand": "Glossier",
+      "product_records": 33,
+      "review_records": 385
+    },
+    {
+      "brand": "Glow Recipe",
+      "product_records": 29,
+      "review_records": 31473
+    },
+    {
+      "brand": "Good Dye Young",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Google",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "goop",
+      "product_records": 32,
+      "review_records": 12050
+    },
+    {
+      "brand": "Grace Eleyae",
+      "product_records": 10,
+      "review_records": 0
+    },
+    {
+      "brand": "Grande Cosmetics",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "Gucci",
+      "product_records": 58,
+      "review_records": 451
+    },
+    {
+      "brand": "GUERLAIN",
+      "product_records": 41,
+      "review_records": 3822
+    },
+    {
+      "brand": "GXVE BY GWEN STEFANI",
+      "product_records": 16,
+      "review_records": 0
+    },
+    {
+      "brand": "HABIT",
+      "product_records": 3,
+      "review_records": 457
+    },
+    {
+      "brand": "Hanni",
+      "product_records": 8,
+      "review_records": 493
+    },
+    {
+      "brand": "HAUS LABS BY LADY GAGA",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Herbivore",
+      "product_records": 33,
+      "review_records": 9633
+    },
+    {
+      "brand": "HERETIC",
+      "product_records": 8,
+      "review_records": 0
+    },
+    {
+      "brand": "HERMÈS",
+      "product_records": 31,
+      "review_records": 0
+    },
+    {
+      "brand": "Hourglass",
+      "product_records": 87,
+      "review_records": 416
+    },
+    {
+      "brand": "House of Lashes",
+      "product_records": 4,
+      "review_records": 0
+    },
+    {
+      "brand": "HUDA BEAUTY",
+      "product_records": 59,
+      "review_records": 0
+    },
+    {
+      "brand": "HUM Nutrition",
+      "product_records": 29,
+      "review_records": 4405
+    },
+    {
+      "brand": "Hyper Skin",
+      "product_records": 5,
+      "review_records": 332
+    },
+    {
+      "brand": "Iconic London",
+      "product_records": 19,
+      "review_records": 66
+    },
+    {
+      "brand": "IGK",
+      "product_records": 42,
+      "review_records": 0
+    },
+    {
+      "brand": "ILIA",
+      "product_records": 31,
+      "review_records": 1095
+    },
+    {
+      "brand": "iluminage",
+      "product_records": 1,
+      "review_records": 100
+    },
+    {
+      "brand": "INC.redible",
+      "product_records": 16,
+      "review_records": 218
+    },
+    {
+      "brand": "iNNBEAUTY PROJECT",
+      "product_records": 15,
+      "review_records": 2803
+    },
+    {
+      "brand": "innisfree",
+      "product_records": 18,
+      "review_records": 4363
+    },
+    {
+      "brand": "Isle of Paradise",
+      "product_records": 20,
+      "review_records": 5977
+    },
+    {
+      "brand": "IT Cosmetics",
+      "product_records": 47,
+      "review_records": 9761
+    },
+    {
+      "brand": "Jack Black",
+      "product_records": 48,
+      "review_records": 3657
+    },
+    {
+      "brand": "Jillian Dempsey",
+      "product_records": 1,
+      "review_records": 67
+    },
+    {
+      "brand": "JIMMY CHOO",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "JLo Beauty",
+      "product_records": 11,
+      "review_records": 3004
+    },
+    {
+      "brand": "Jo Malone London",
+      "product_records": 88,
+      "review_records": 0
+    },
+    {
+      "brand": "Josie Maran",
+      "product_records": 23,
+      "review_records": 17147
+    },
+    {
+      "brand": "Jouer Cosmetics",
+      "product_records": 16,
+      "review_records": 0
+    },
+    {
+      "brand": "Juicy Couture",
+      "product_records": 4,
+      "review_records": 0
+    },
+    {
+      "brand": "Juliette Has a Gun",
+      "product_records": 32,
+      "review_records": 0
+    },
+    {
+      "brand": "JVN",
+      "product_records": 17,
+      "review_records": 0
+    },
+    {
+      "brand": "K18 Biomimetic Hairscience",
+      "product_records": 5,
+      "review_records": 0
+    },
+    {
+      "brand": "Kaja",
+      "product_records": 20,
+      "review_records": 0
+    },
+    {
+      "brand": "Kate McLeod",
+      "product_records": 12,
+      "review_records": 134
+    },
+    {
+      "brand": "Kate Somerville",
+      "product_records": 46,
+      "review_records": 15714
+    },
+    {
+      "brand": "KAYALI",
+      "product_records": 28,
+      "review_records": 0
+    },
+    {
+      "brand": "Kiehl's Since 1851",
+      "product_records": 75,
+      "review_records": 21675
+    },
+    {
+      "brand": "KILIAN Paris",
+      "product_records": 29,
+      "review_records": 0
+    },
+    {
+      "brand": "Koh Gen Do",
+      "product_records": 2,
+      "review_records": 284
+    },
+    {
+      "brand": "Kopari",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "KORA Organics",
+      "product_records": 19,
+      "review_records": 7298
+    },
+    {
+      "brand": "KORRES",
+      "product_records": 10,
+      "review_records": 13740
+    },
+    {
+      "brand": "Kosas",
+      "product_records": 23,
+      "review_records": 335
+    },
+    {
+      "brand": "Kulfi",
+      "product_records": 3,
+      "review_records": 0
+    },
+    {
+      "brand": "KVD Beauty",
+      "product_records": 36,
+      "review_records": 0
+    },
+    {
+      "brand": "Kérastase",
+      "product_records": 108,
+      "review_records": 0
+    },
+    {
+      "brand": "L'Occitane",
+      "product_records": 22,
+      "review_records": 237
+    },
+    {
+      "brand": "L'Oreal Professionnel",
+      "product_records": 3,
+      "review_records": 0
+    },
+    {
+      "brand": "La Mer",
+      "product_records": 39,
+      "review_records": 6559
+    },
+    {
+      "brand": "Lancôme",
+      "product_records": 81,
+      "review_records": 12670
+    },
+    {
+      "brand": "LANEIGE",
+      "product_records": 27,
+      "review_records": 27425
+    },
+    {
+      "brand": "Laura Mercier",
+      "product_records": 55,
+      "review_records": 0
+    },
+    {
+      "brand": "LAWLESS",
+      "product_records": 24,
+      "review_records": 251
+    },
+    {
+      "brand": "lilah b.",
+      "product_records": 18,
+      "review_records": 103
+    },
+    {
+      "brand": "Lilly Lashes",
+      "product_records": 18,
+      "review_records": 0
+    },
+    {
+      "brand": "Living Proof",
+      "product_records": 49,
+      "review_records": 0
+    },
+    {
+      "brand": "LYS Beauty",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "MACRENE actives",
+      "product_records": 5,
+      "review_records": 327
+    },
+    {
+      "brand": "Maison Louis Marie",
+      "product_records": 30,
+      "review_records": 0
+    },
+    {
+      "brand": "Maison Margiela",
+      "product_records": 36,
+      "review_records": 0
+    },
+    {
+      "brand": "MAKE UP FOR EVER",
+      "product_records": 74,
+      "review_records": 0
+    },
+    {
+      "brand": "MAKEUP BY MARIO",
+      "product_records": 35,
+      "review_records": 0
+    },
+    {
+      "brand": "MARA",
+      "product_records": 10,
+      "review_records": 944
+    },
+    {
+      "brand": "Marc Jacobs Fragrances",
+      "product_records": 29,
+      "review_records": 0
+    },
+    {
+      "brand": "Mario Badescu",
+      "product_records": 42,
+      "review_records": 2152
+    },
+    {
+      "brand": "maude",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Melanin Haircare",
+      "product_records": 5,
+      "review_records": 0
+    },
+    {
+      "brand": "Melt Cosmetics",
+      "product_records": 30,
+      "review_records": 0
+    },
+    {
+      "brand": "MERIT",
+      "product_records": 10,
+      "review_records": 488
+    },
+    {
+      "brand": "MILK MAKEUP",
+      "product_records": 49,
+      "review_records": 5634
+    },
+    {
+      "brand": "Mizani",
+      "product_records": 34,
+      "review_records": 0
+    },
+    {
+      "brand": "Montblanc",
+      "product_records": 8,
+      "review_records": 0
+    },
+    {
+      "brand": "Moon Juice",
+      "product_records": 17,
+      "review_records": 2077
+    },
+    {
+      "brand": "Moroccanoil",
+      "product_records": 91,
+      "review_records": 0
+    },
+    {
+      "brand": "Mount Lai",
+      "product_records": 9,
+      "review_records": 869
+    },
+    {
+      "brand": "Mugler",
+      "product_records": 13,
+      "review_records": 0
+    },
+    {
+      "brand": "Murad",
+      "product_records": 50,
+      "review_records": 24126
+    },
+    {
+      "brand": "NAILS INC.",
+      "product_records": 25,
+      "review_records": 0
+    },
+    {
+      "brand": "Narciso Rodriguez",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "NARS",
+      "product_records": 67,
+      "review_records": 0
+    },
+    {
+      "brand": "Natasha Denona",
+      "product_records": 40,
+      "review_records": 0
+    },
+    {
+      "brand": "Naturally Serious",
+      "product_records": 11,
+      "review_records": 1405
+    },
+    {
+      "brand": "NEST New York",
+      "product_records": 115,
+      "review_records": 0
+    },
+    {
+      "brand": "NUDESTIX",
+      "product_records": 45,
+      "review_records": 381
+    },
+    {
+      "brand": "NuFACE",
+      "product_records": 15,
+      "review_records": 495
+    },
+    {
+      "brand": "Nutrafol",
+      "product_records": 10,
+      "review_records": 0
+    },
+    {
+      "brand": "Nécessaire",
+      "product_records": 17,
+      "review_records": 678
+    },
+    {
+      "brand": "Olaplex",
+      "product_records": 14,
+      "review_records": 0
+    },
+    {
+      "brand": "OLEHENRIKSEN",
+      "product_records": 39,
+      "review_records": 25047
+    },
+    {
+      "brand": "ONE/SIZE by Patrick Starrr",
+      "product_records": 29,
+      "review_records": 510
+    },
+    {
+      "brand": "Oribe",
+      "product_records": 94,
+      "review_records": 0
+    },
+    {
+      "brand": "Origins",
+      "product_records": 40,
+      "review_records": 29042
+    },
+    {
+      "brand": "OTHERLAND",
+      "product_records": 15,
+      "review_records": 0
+    },
+    {
+      "brand": "OUAI",
+      "product_records": 55,
+      "review_records": 0
+    },
+    {
+      "brand": "Overose",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Paco Rabanne",
+      "product_records": 15,
+      "review_records": 0
+    },
+    {
+      "brand": "PAT McGRATH LABS",
+      "product_records": 50,
+      "review_records": 0
+    },
+    {
+      "brand": "PATRICK TA",
+      "product_records": 31,
+      "review_records": 0
+    },
+    {
+      "brand": "PATTERN by Tracee Ellis Ross",
+      "product_records": 48,
+      "review_records": 0
+    },
+    {
+      "brand": "Paula's Choice",
+      "product_records": 39,
+      "review_records": 6449
+    },
+    {
+      "brand": "Peace Out",
+      "product_records": 15,
+      "review_records": 11036
+    },
+    {
+      "brand": "Peter Thomas Roth",
+      "product_records": 63,
+      "review_records": 28818
+    },
+    {
+      "brand": "philosophy",
+      "product_records": 1,
+      "review_records": 0
+    },
+    {
+      "brand": "PHLUR",
+      "product_records": 22,
+      "review_records": 0
+    },
+    {
+      "brand": "PMD",
+      "product_records": 9,
+      "review_records": 801
+    },
+    {
+      "brand": "Prada",
+      "product_records": 15,
+      "review_records": 0
+    },
+    {
+      "brand": "Prima",
+      "product_records": 8,
+      "review_records": 791
+    },
+    {
+      "brand": "PROVEN Skincare",
+      "product_records": 1,
+      "review_records": 209
+    },
+    {
+      "brand": "Pureology",
+      "product_records": 44,
+      "review_records": 0
+    },
+    {
+      "brand": "Rahua",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Ralph Lauren",
+      "product_records": 9,
+      "review_records": 0
+    },
+    {
+      "brand": "RANAVAT",
+      "product_records": 13,
+      "review_records": 1061
+    },
+    {
+      "brand": "Rare Beauty by Selena Gomez",
+      "product_records": 40,
+      "review_records": 0
+    },
+    {
+      "brand": "REFY",
+      "product_records": 16,
+      "review_records": 0
+    },
+    {
+      "brand": "REN Clean Skincare",
+      "product_records": 25,
+      "review_records": 9149
+    },
+    {
+      "brand": "RIES",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "rms beauty",
+      "product_records": 11,
+      "review_records": 0
+    },
+    {
+      "brand": "ROSE INC",
+      "product_records": 31,
+      "review_records": 1186
+    },
+    {
+      "brand": "ROSE Ingleton MD",
+      "product_records": 8,
+      "review_records": 247
+    },
+    {
+      "brand": "Rosebud Perfume Co.",
+      "product_records": 6,
+      "review_records": 12529
+    },
+    {
+      "brand": "Rossano Ferretti Parma",
+      "product_records": 26,
+      "review_records": 0
+    },
+    {
+      "brand": "Saie",
+      "product_records": 17,
+      "review_records": 183
+    },
+    {
+      "brand": "Saint Jane Beauty",
+      "product_records": 10,
+      "review_records": 1083
+    },
+    {
+      "brand": "SEPHORA COLLECTION",
+      "product_records": 352,
+      "review_records": 16924
+    },
+    {
+      "brand": "Sephora Favorites",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "Shani Darden Skin Care",
+      "product_records": 11,
+      "review_records": 3375
+    },
+    {
+      "brand": "Shiseido",
+      "product_records": 71,
+      "review_records": 19913
+    },
+    {
+      "brand": "shu uemura",
+      "product_records": 43,
+      "review_records": 0
+    },
+    {
+      "brand": "SIMIHAZE BEAUTY",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "SK-II",
+      "product_records": 16,
+      "review_records": 10740
+    },
+    {
+      "brand": "Skin Laundry",
+      "product_records": 3,
+      "review_records": 206
+    },
+    {
+      "brand": "Skinfix",
+      "product_records": 27,
+      "review_records": 11743
+    },
+    {
+      "brand": "SKYLAR",
+      "product_records": 24,
+      "review_records": 0
+    },
+    {
+      "brand": "Slip",
+      "product_records": 16,
+      "review_records": 689
+    },
+    {
+      "brand": "Smashbox",
+      "product_records": 46,
+      "review_records": 0
+    },
+    {
+      "brand": "SOBEL SKIN Rx",
+      "product_records": 6,
+      "review_records": 313
+    },
+    {
+      "brand": "Sol de Janeiro",
+      "product_records": 43,
+      "review_records": 1346
+    },
+    {
+      "brand": "Soleil Toujours",
+      "product_records": 7,
+      "review_records": 37
+    },
+    {
+      "brand": "St. Tropez",
+      "product_records": 21,
+      "review_records": 4444
+    },
+    {
+      "brand": "stila",
+      "product_records": 11,
+      "review_records": 0
+    },
+    {
+      "brand": "StriVectin",
+      "product_records": 25,
+      "review_records": 1202
+    },
+    {
+      "brand": "Sulwhasoo",
+      "product_records": 27,
+      "review_records": 5788
+    },
+    {
+      "brand": "Summer Fridays",
+      "product_records": 16,
+      "review_records": 14977
+    },
+    {
+      "brand": "SUNDAY II SUNDAY",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Sunday Riley",
+      "product_records": 30,
+      "review_records": 25366
+    },
+    {
+      "brand": "Supergoop!",
+      "product_records": 40,
+      "review_records": 19636
+    },
+    {
+      "brand": "Susteau",
+      "product_records": 4,
+      "review_records": 0
+    },
+    {
+      "brand": "T3",
+      "product_records": 26,
+      "review_records": 0
+    },
+    {
+      "brand": "TAN-LUXE",
+      "product_records": 15,
+      "review_records": 1487
+    },
+    {
+      "brand": "tarte",
+      "product_records": 131,
+      "review_records": 9105
+    },
+    {
+      "brand": "Tata Harper",
+      "product_records": 32,
+      "review_records": 4730
+    },
+    {
+      "brand": "Tatcha",
+      "product_records": 52,
+      "review_records": 46687
+    },
+    {
+      "brand": "The 7 Virtues",
+      "product_records": 24,
+      "review_records": 0
+    },
+    {
+      "brand": "The INKEY List",
+      "product_records": 47,
+      "review_records": 25680
+    },
+    {
+      "brand": "The Maker",
+      "product_records": 10,
+      "review_records": 0
+    },
+    {
+      "brand": "The Nue Co.",
+      "product_records": 12,
+      "review_records": 926
+    },
+    {
+      "brand": "The Ordinary",
+      "product_records": 54,
+      "review_records": 35809
+    },
+    {
+      "brand": "The Original MakeUp Eraser",
+      "product_records": 7,
+      "review_records": 0
+    },
+    {
+      "brand": "The Outset",
+      "product_records": 8,
+      "review_records": 1169
+    },
+    {
+      "brand": "The Phluid Project",
+      "product_records": 9,
+      "review_records": 0
+    },
+    {
+      "brand": "TOCCA",
+      "product_records": 17,
+      "review_records": 0
+    },
+    {
+      "brand": "TOM FORD",
+      "product_records": 100,
+      "review_records": 0
+    },
+    {
+      "brand": "Too Faced",
+      "product_records": 62,
+      "review_records": 0
+    },
+    {
+      "brand": "Topicals",
+      "product_records": 6,
+      "review_records": 1838
+    },
+    {
+      "brand": "Touchland",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "Tower 28 Beauty",
+      "product_records": 13,
+      "review_records": 1015
+    },
+    {
+      "brand": "TULA Skincare",
+      "product_records": 32,
+      "review_records": 4387
+    },
+    {
+      "brand": "TWEEZERMAN",
+      "product_records": 18,
+      "review_records": 38
+    },
+    {
+      "brand": "Urban Decay",
+      "product_records": 59,
+      "review_records": 0
+    },
+    {
+      "brand": "Valentino",
+      "product_records": 30,
+      "review_records": 0
+    },
+    {
+      "brand": "Vegamour",
+      "product_records": 23,
+      "review_records": 0
+    },
+    {
+      "brand": "Velour Lashes",
+      "product_records": 14,
+      "review_records": 0
+    },
+    {
+      "brand": "Verb",
+      "product_records": 44,
+      "review_records": 0
+    },
+    {
+      "brand": "Versace",
+      "product_records": 39,
+      "review_records": 0
+    },
+    {
+      "brand": "Viktor&Rolf",
+      "product_records": 21,
+      "review_records": 0
+    },
+    {
+      "brand": "Violet Voss",
+      "product_records": 6,
+      "review_records": 0
+    },
+    {
+      "brand": "Viori",
+      "product_records": 5,
+      "review_records": 0
+    },
+    {
+      "brand": "Virtue",
+      "product_records": 52,
+      "review_records": 0
+    },
+    {
+      "brand": "Viseart",
+      "product_records": 2,
+      "review_records": 0
+    },
+    {
+      "brand": "VOLUSPA",
+      "product_records": 62,
+      "review_records": 0
+    },
+    {
+      "brand": "Wander Beauty",
+      "product_records": 13,
+      "review_records": 562
+    },
+    {
+      "brand": "WASO",
+      "product_records": 8,
+      "review_records": 3686
+    },
+    {
+      "brand": "Westman Atelier",
+      "product_records": 26,
+      "review_records": 0
+    },
+    {
+      "brand": "Wishful",
+      "product_records": 10,
+      "review_records": 6786
+    },
+    {
+      "brand": "World of Chris Collins",
+      "product_records": 12,
+      "review_records": 0
+    },
+    {
+      "brand": "Youth To The People",
+      "product_records": 27,
+      "review_records": 29119
+    },
+    {
+      "brand": "Yves Saint Laurent",
+      "product_records": 65,
+      "review_records": 0
+    }
+  ]
+}

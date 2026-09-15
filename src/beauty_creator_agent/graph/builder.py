@@ -9,7 +9,7 @@ from beauty_creator_agent.graph.nodes.workflow import WorkflowNodes
 from beauty_creator_agent.graph.routing import route_after_compliance
 from beauty_creator_agent.graph.state import MarketingState
 from beauty_creator_agent.services.compliance import ComplianceSystem
-from beauty_creator_agent.services.research import ResearchService, sample_catalog
+from beauty_creator_agent.services.research import ResearchService, configured_catalog
 
 
 def build_graph(
@@ -23,7 +23,7 @@ def build_graph(
     resolved_provider = provider or get_model_provider()
     nodes = WorkflowNodes(
         resolved_provider,
-        ResearchService(sample_catalog()),
+        ResearchService(configured_catalog()),
         ComplianceSystem(resolved_provider),
         enable_interrupts=enable_interrupts,
     )

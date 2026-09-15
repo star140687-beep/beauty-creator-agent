@@ -47,36 +47,11 @@ async def run(dataset: Path) -> dict[str, Any]:
     for result in results:
         for name, metric in metrics.items():
             metric.record(bool(result[name]))
-    full_scores = {metric.name: metric.score for metric in metrics.values()}
-    baselines = [
-        {
-            "name": "single_llm",
-            "planner_correct": 0.0,
-            "compliance_completed": 0.0,
-            "has_provenance": 0.0,
-            "reached_human_review": 0.0,
-        },
-        {
-            "name": "llm_plus_rag",
-            "planner_correct": 0.0,
-            "compliance_completed": 0.0,
-            "has_provenance": full_scores.get("has_provenance", 0.0),
-            "reached_human_review": 0.0,
-        },
-        {
-            "name": "multi_agent_without_compliance",
-            "planner_correct": full_scores.get("planner_correct", 0.0),
-            "compliance_completed": 0.0,
-            "has_provenance": full_scores.get("has_provenance", 0.0),
-            "reached_human_review": 0.0,
-        },
-        {"name": "full_workflow", **full_scores},
-    ]
     return {
         "dataset": str(dataset),
         "case_count": len(cases),
+        "provider": "deterministic_test_double",
         "metrics": [metric.as_dict() for metric in metrics.values()],
-        "baselines": baselines,
         "cases": results,
     }
 

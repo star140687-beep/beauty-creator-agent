@@ -3,6 +3,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 Platform = Literal["xiaohongshu", "douyin", "bilibili", "weibo"]
+Market = Literal["CN", "US", "EU"]
 NonEmptyStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 

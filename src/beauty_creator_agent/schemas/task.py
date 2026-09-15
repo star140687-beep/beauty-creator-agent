@@ -1,6 +1,6 @@
 from pydantic import HttpUrl
 
-from beauty_creator_agent.schemas.common import ContractModel, NonEmptyStr, Platform
+from beauty_creator_agent.schemas.common import ContractModel, Market, NonEmptyStr, Platform
 
 
 class ProductInput(ContractModel):
@@ -17,6 +17,7 @@ class TaskCreate(ContractModel):
 
     product: ProductInput
     platform: Platform
+    market: Market = "CN"
     objective: NonEmptyStr
     audience: NonEmptyStr | None = None
     requirements: NonEmptyStr | None = None

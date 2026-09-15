@@ -60,7 +60,7 @@ class WorkflowNodes:
 
     async def compliance(self, state: MarketingState) -> dict[str, Any]:
         result = await self.compliance_system.check(
-            state["current_draft"], state.get("evidence", [])
+            state["current_draft"], state.get("evidence", []), market=state["request"].market
         )
         return {"compliance_result": result}
 

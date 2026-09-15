@@ -12,6 +12,7 @@ st.title("Beauty Creator Agent")
 with st.form("create-task"):
     brand = st.text_input("品牌")
     product = st.text_input("产品名称")
+    market = st.selectbox("投放市场", ["CN", "US", "EU"], index=0)
     description = st.text_area("产品描述")
     objective = st.text_input("目标", value="生成自然、不夸张的小红书种草文案")
     audience = st.text_input("目标人群")
@@ -21,6 +22,7 @@ if submitted:
     payload = {
         "product": {"brand": brand or None, "name": product, "description": description or None},
         "platform": "xiaohongshu",
+        "market": market,
         "objective": objective,
         "audience": audience or None,
     }

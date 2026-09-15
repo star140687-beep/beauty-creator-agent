@@ -10,5 +10,7 @@ async def test_evaluation_pipeline_returns_machine_readable_metrics() -> None:
     report = await run(Path("evaluation/datasets/v1.jsonl"))
 
     assert report["case_count"] == 5
+    assert report["provider"] == "deterministic_test_double"
+    assert "baselines" not in report
     assert len(report["metrics"]) == 5
     assert all(0 <= metric["score"] <= 1 for metric in report["metrics"])

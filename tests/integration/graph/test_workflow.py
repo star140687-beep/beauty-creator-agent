@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnableConfig
 from beauty_creator_agent.agents.fake import FakeLLMProvider
 from beauty_creator_agent.graph.builder import build_graph
 from beauty_creator_agent.graph.state import MarketingState
+from beauty_creator_agent.schemas.content import ContentDraft
 from beauty_creator_agent.schemas.task import ProductInput, TaskCreate
 
 
@@ -68,3 +69,24 @@ async def test_max_revision_count_prevents_infinite_loop() -> None:
     assert len(result["draft_history"]) == 3
     assert provider.compliance_calls == 3
     assert result["compliance_result"].status == "fail"
+
+
+class UngroundedProseProvider(FakeLLMProvider):
+    async def write(self, state: MarketingState) -> ContentDraft:
+        draft = await super().write(state)
+        return draft.model_copy(
+            update={"body": "这款产品专为干燥肌肤设计，帮助改善肌肤水分状态。"}
+        )
+
+
+@pytest.mark.asyncio
+async def test_unlisted_body_fact_stays_failed_after_bounded_revision() -> None:
+    result = await run(UngroundedProseProvider(), max_revisions=2)
+
+    assert result["status"] == "awaiting_human_review"
+    assert result["revision_count"] == 2
+    assert result["compliance_result"].status == "fail"
+    assert any(
+        issue.code == "PROSE_FACT_UNVERIFIED"
+        for issue in result["compliance_result"].issues
+    )

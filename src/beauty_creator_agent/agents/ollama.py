@@ -6,12 +6,20 @@ from pydantic import BaseModel, ValidationError
 
 from beauty_creator_agent.core.errors import ExternalServiceError
 from beauty_creator_agent.graph.state import MarketingState
-from beauty_creator_agent.schemas.compliance import ComplianceResult
+from beauty_creator_agent.schemas.compliance import ComplianceIssue, ComplianceResult
 from beauty_creator_agent.schemas.content import ContentDraft
 from beauty_creator_agent.schemas.planner import PlannerDecision
 from beauty_creator_agent.schemas.task import TaskCreate
 
 StructuredModel = TypeVar("StructuredModel", bound=BaseModel)
+
+
+class SemanticScreen(BaseModel):
+    """Small model-facing schema; the application still returns its full contract."""
+
+    risk_detected: bool
+    uncertain: bool
+    trigger: str
 
 
 class OllamaProvider:
@@ -85,26 +93,56 @@ class OllamaProvider:
         prompt_data = {
             "request": request.model_dump(mode="json"),
             "evidence": evidence,
+            "allowed_identity_claim": {
+                "text": f"产品名称为{request.product.name}",
+                "claim_type": "product_fact",
+                "source_ids": ["user_product_input"],
+            },
             "revision_count": state.get("revision_count", 0),
             "revision_instructions": revision,
         }
         return await self._structured_chat(
             model=self.writer_model,
             system=(
-                "你是小红书美妆内容 Writer。只能把 evidence 中的 product_fact 当作产品事实；"
-                "不得伪造亲身体验，不得把品类洞察冒充当前产品反馈。事实 claim 必须绑定 source_ids。"
+                "你是小红书美妆内容 Writer。user_product_name 只能证明输入的产品名称；"
+                "external_search 是未核实的第三方/众包信息，"
+                "不能证明功效、成分、适用肤质或使用结果。"
+                "只有 source_type=official 且原文直接支持的具体事实才可写成其他 product_fact。"
+                "不能由产品名称推测功效，不能伪造亲身体验，也不能把品类洞察冒充该产品反馈。"
+                "当没有官方证据时，正文只写中性、非事实性介绍；claims 只放提供的"
+                " allowed_identity_claim，text 和 source_ids 都要逐字一致，不要加额外事实 claim。"
             ),
             prompt=f"根据以下可信上下文生成文案：\n{json.dumps(prompt_data, ensure_ascii=False)}",
             response_model=ContentDraft,
         )
 
     async def check(self, draft: ContentDraft) -> ComplianceResult:
-        return await self._structured_chat(
+        screen = await self._structured_chat(
             model=self.compliance_model,
             system=(
                 "你是美妆营销合规审查员。检查绝对化功效、医疗宣称、伪装体验、"
-                "无来源产品事实和误导表达。无法确认时必须 fail closed。"
+                "无来源产品事实和误导表达。只返回 risk_detected、uncertain、trigger。"
+                "有疑问则 uncertain=true；无风险时 trigger 为空。"
             ),
             prompt=f"审查以下文案与 claims：\n{draft.model_dump_json(indent=2)}",
-            response_model=ComplianceResult,
+            response_model=SemanticScreen,
+        )
+        if not screen.risk_detected and not screen.uncertain:
+            return ComplianceResult(status="pass")
+        return ComplianceResult(
+            status="fail",
+            issues=[
+                ComplianceIssue(
+                    code="SEMANTIC_RISK" if screen.risk_detected else "SEMANTIC_UNCERTAIN",
+                    category="semantic_review",
+                    severity="high",
+                    message=(
+                        "Semantic risk detected"
+                        if screen.risk_detected
+                        else "Semantic review uncertain"
+                    ),
+                    claim_text=screen.trigger.strip() or None,
+                )
+            ],
+            revision_instructions=["删除或改写模型标记的高风险表达，并复核对应证据"],
         )

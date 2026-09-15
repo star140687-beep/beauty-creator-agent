@@ -68,6 +68,14 @@ class OllamaProvider:
         try:
             async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.post(f"{self.base_url}/api/chat", json=payload)
+                if response.is_server_error:
+                    # Some Ollama model builds reject complex JSON Schema, while
+                    # still supporting JSON mode. Keep Pydantic validation below
+                    # as the application-level contract enforcement.
+                    fallback_payload = {**payload, "format": "json"}
+                    response = await client.post(
+                        f"{self.base_url}/api/chat", json=fallback_payload
+                    )
                 response.raise_for_status()
                 content = response.json()["message"]["content"]
             return response_model.model_validate_json(content)

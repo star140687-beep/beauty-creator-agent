@@ -63,6 +63,34 @@ async def test_ollama_invalid_output_fails_closed() -> None:
 
 @pytest.mark.asyncio
 @respx.mock
+async def test_ollama_retries_json_mode_after_schema_server_failure() -> None:
+    decision = PlannerDecision(
+        intent="generate",
+        platform="xiaohongshu",
+        needs_product_research=True,
+        needs_consumer_research=True,
+        needs_content_research=True,
+        needs_trend_research=False,
+        needs_writer=True,
+        needs_compliance=True,
+        reasoning_summary="Generate workflow",
+    )
+    route = respx.post("http://127.0.0.1:11434/api/chat").mock(
+        side_effect=[
+            httpx.Response(502, json={"error": "schema unavailable"}),
+            httpx.Response(200, json={"message": {"content": decision.model_dump_json()}}),
+        ]
+    )
+
+    result = await OllamaProvider().plan(task())
+
+    assert result == decision
+    assert len(route.calls) == 2
+    assert json.loads(route.calls[1].request.content)["format"] == "json"
+
+
+@pytest.mark.asyncio
+@respx.mock
 async def test_ollama_semantic_uses_small_schema_and_full_contract() -> None:
     route = respx.post("http://127.0.0.1:11434/api/chat").mock(
         return_value=httpx.Response(

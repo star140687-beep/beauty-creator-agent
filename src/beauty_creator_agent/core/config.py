@@ -21,9 +21,10 @@ class Settings(BaseSettings):
     llm_provider: Literal["ollama", "fake"] = "ollama"
     llm_base_url: str = "http://127.0.0.1:11434"
     llm_api_key: str | None = Field(default=None, repr=False)
-    planner_model: str = "qwen2.5:14b"
+    planner_model: str = "llama3.2:3b"
     writer_model: str = "qwen2.5:14b"
-    compliance_model: str = "qwen2.5:14b"
+    compliance_model: str = "llama3.2:3b"
+    ollama_keep_alive: str = "15m"
     embedding_model: str | None = None
     embedding_dim: int | None = Field(default=None, gt=0)
     max_revision_count: int = Field(default=2, ge=0, le=10)

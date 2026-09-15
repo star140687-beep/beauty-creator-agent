@@ -5,18 +5,19 @@ import httpx
 import streamlit as st
 
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+TERMINAL_STATUSES = {"awaiting_human_review", "completed", "rejected", "failed"}
 
 st.set_page_config(page_title="Beauty Creator Agent", layout="wide")
 st.title("Beauty Creator Agent")
 
 with st.form("create-task"):
-    target_length = st.slider("正文目标长度（中文字符）", 200, 5000, 800, step=100)
     brand = st.text_input("品牌")
     product = st.text_input("产品名称")
     market = st.selectbox("投放市场", ["CN", "US", "EU"], index=0)
     description = st.text_area("产品描述")
     objective = st.text_input("目标", value="生成自然、不夸张的小红书种草文案")
     audience = st.text_input("目标人群")
+    target_length = st.slider("正文目标长度（中文字符）", 200, 5000, 800, step=100)
     submitted = st.form_submit_button("开始生成")
 
 if submitted:
@@ -28,17 +29,30 @@ if submitted:
         "audience": audience or None,
         "target_length": target_length,
     }
-    response = httpx.post(f"{API_URL}/v1/tasks", json=payload, timeout=30)
-    response.raise_for_status()
-    st.session_state.task_id = response.json()["task_id"]
+    try:
+        response = httpx.post(f"{API_URL}/v1/tasks", json=payload, timeout=30)
+        response.raise_for_status()
+        st.session_state.task_id = response.json()["task_id"]
+    except httpx.HTTPError as exc:
+        st.error(f"无法创建任务：{exc}")
 
-task_id = st.session_state.get("task_id")
-if task_id:
-    st.info(f"Task ID: {task_id}")
-    if st.button("刷新状态"):
-        st.rerun()
-    task = httpx.get(f"{API_URL}/v1/tasks/{task_id}", timeout=30).json()
-    st.subheader(f"状态：{task['status']}")
+
+@st.fragment(run_every=2)
+def task_panel(task_id: str) -> None:
+    """Poll task status so long local model calls remain visible to the user."""
+    try:
+        response = httpx.get(f"{API_URL}/v1/tasks/{task_id}", timeout=30)
+        response.raise_for_status()
+        task = response.json()
+    except httpx.HTTPError as exc:
+        st.error(f"无法读取任务状态：{exc}")
+        return
+
+    status = task["status"]
+    st.info(f"任务 ID：{task_id}")
+    st.subheader(f"状态：{status}")
+    if status not in TERMINAL_STATUSES:
+        st.caption("正在执行工作流，页面会每 2 秒自动更新。")
     state = task.get("state", {})
     col1, col2 = st.columns(2)
     with col1:
@@ -50,18 +64,27 @@ if task_id:
     if state.get("current_draft"):
         draft = state["current_draft"]
         st.subheader(draft["title"])
-        edited_body = st.text_area("正文", value=draft["body"], height=300)
-        if task["status"] == "awaiting_human_review":
-            action = st.radio("审核操作", ["approve", "edit", "reject"], horizontal=True)
+        st.text_area("正文", value=draft["body"], height=300, disabled=True)
+        if draft.get("warnings"):
+            st.warning("\n".join(draft["warnings"]))
+        if status == "awaiting_human_review":
+            action = st.radio("审核操作", ["approve", "reject"], horizontal=True)
             feedback = st.text_input("审核意见")
             if st.button("提交审核"):
-                review = {"action": action, "feedback": feedback or None}
-                if action == "edit":
-                    review["body"] = edited_body
-                result = httpx.post(
-                    f"{API_URL}/v1/tasks/{task_id}/review", json=review, timeout=180
-                )
-                result.raise_for_status()
-                st.json(result.json())
+                try:
+                    result = httpx.post(
+                        f"{API_URL}/v1/tasks/{task_id}/review",
+                        json={"action": action, "feedback": feedback or None},
+                        timeout=180,
+                    )
+                    result.raise_for_status()
+                    st.rerun()
+                except httpx.HTTPError as exc:
+                    st.error(f"无法提交审核：{exc}")
     with st.expander("Workflow events"):
         st.code(json.dumps(task.get("events", []), ensure_ascii=False, indent=2))
+
+
+task_id = st.session_state.get("task_id")
+if task_id:
+    task_panel(task_id)

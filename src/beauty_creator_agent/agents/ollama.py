@@ -33,12 +33,14 @@ class OllamaProvider:
         planner_model: str = "qwen2.5:14b",
         writer_model: str = "qwen2.5:14b",
         compliance_model: str = "qwen2.5:14b",
+        keep_alive: str = "15m",
         timeout_seconds: float = 180.0,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.planner_model = planner_model
         self.writer_model = writer_model
         self.compliance_model = compliance_model
+        self.keep_alive = keep_alive
         self.timeout_seconds = timeout_seconds
 
     async def _structured_chat(
@@ -64,6 +66,7 @@ class OllamaProvider:
                 },
             ],
             "stream": False,
+            "keep_alive": self.keep_alive,
             "format": schema,
             "options": options or {"temperature": 0},
         }

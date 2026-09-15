@@ -57,10 +57,18 @@ class TaskManager:
             "thread_id": task.thread_id,
             "request": task.request,
         }
+        task.status = "running"
         self._emit(task, "workflow.started", "workflow", "running")
         try:
-            result = await task.graph.ainvoke(initial, config=config)
-            task.state = cast(MarketingState, result)
+            async for update in task.graph.astream(initial, config=config, stream_mode="updates"):
+                for node, node_update in update.items():
+                    if node.startswith("__") or not isinstance(node_update, dict):
+                        continue
+                    task.state.update(cast(MarketingState, node_update))
+                    phase = task.state.get("status", "running")
+                    self._emit(task, "workflow.progress", node, phase)
+            snapshot = await task.graph.aget_state(config)
+            task.state = cast(MarketingState, snapshot.values)
             task.status = task.state.get("status", "failed")
             self._emit(
                 task,

@@ -8,7 +8,7 @@ Beauty Creator Agent is a RAG + Agent workflow for beauty content generation.
 
 The system accepts a product brief, plans the required research, retrieves product, review, and content evidence, generates platform content, verifies claims, performs compliance checks, and routes unresolved cases to human review.
 
-The default local model is `qwen2.5:14b` served by Ollama. Automated tests use `FakeLLMProvider` and do not require a model, API key, database, or paid service.
+The default local setup uses `qwen2.5:14b` for writing and `llama3.2:3b` for planner and compliance steps, served by Ollama. Automated tests use `FakeLLMProvider` and do not require a model, API key, database, or paid service.
 
 ## Agent Workflow
 

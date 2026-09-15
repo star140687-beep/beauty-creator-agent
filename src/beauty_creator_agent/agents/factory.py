@@ -14,4 +14,5 @@ def get_model_provider(settings: Settings | None = None) -> ModelProvider:
         planner_model=resolved.planner_model,
         writer_model=resolved.writer_model,
         compliance_model=resolved.compliance_model,
+        keep_alive=resolved.ollama_keep_alive,
     )

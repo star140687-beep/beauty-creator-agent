@@ -50,11 +50,33 @@ class WorkflowNodes:
         writer_state = dict(state)
         writer_state["revision_count"] = revision_count
         draft = await self.provider.write(writer_state)  # type: ignore[arg-type]
+        minimum_length = int(state["request"].target_length * 0.7)
+        length_retry_count = 0
+        if len(draft.body.strip()) < minimum_length:
+            length_retry_count = 1
+            writer_state["length_retry_count"] = length_retry_count
+            writer_state["length_feedback"] = (
+                f"The previous body has {len(draft.body.strip())} characters. "
+                f"Expand it to at least {minimum_length} characters "
+                "without adding unsupported facts."
+            )
+            draft = await self.provider.write(writer_state)  # type: ignore[arg-type]
+        if len(draft.body.strip()) < minimum_length:
+            draft = draft.model_copy(
+                update={
+                    "warnings": [
+                        *draft.warnings,
+                        "LENGTH_TARGET_NOT_MET: body remained below the requested minimum "
+                        "after one retry.",
+                    ]
+                }
+            )
         history = [*state.get("draft_history", []), draft]
         return {
             "current_draft": draft,
             "draft_history": history,
             "revision_count": revision_count,
+            "length_retry_count": length_retry_count,
             "status": "checking_compliance",
         }
 

@@ -31,6 +31,8 @@ class MarketingState(TypedDict, total=False):
     draft_history: list[ContentDraft]
     compliance_result: ComplianceResult
     revision_count: int
+    length_retry_count: int
+    length_feedback: str | None
     human_action: Literal["approve", "edit", "reject"] | None
     human_feedback: str | None
     status: Literal[

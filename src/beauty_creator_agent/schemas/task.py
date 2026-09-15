@@ -1,4 +1,4 @@
-from pydantic import HttpUrl
+from pydantic import Field, HttpUrl
 
 from beauty_creator_agent.schemas.common import ContractModel, Market, NonEmptyStr, Platform
 
@@ -22,3 +22,4 @@ class TaskCreate(ContractModel):
     audience: NonEmptyStr | None = None
     requirements: NonEmptyStr | None = None
     existing_content: NonEmptyStr | None = None
+    target_length: int = Field(default=800, ge=200, le=5000)

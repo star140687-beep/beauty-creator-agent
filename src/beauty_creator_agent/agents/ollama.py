@@ -1,4 +1,5 @@
 import json
+import math
 from typing import Any, TypeVar
 
 import httpx
@@ -47,6 +48,7 @@ class OllamaProvider:
         system: str,
         prompt: str,
         response_model: type[StructuredModel],
+        options: dict[str, Any] | None = None,
     ) -> StructuredModel:
         schema = response_model.model_json_schema()
         payload: dict[str, Any] = {
@@ -63,7 +65,7 @@ class OllamaProvider:
             ],
             "stream": False,
             "format": schema,
-            "options": {"temperature": 0},
+            "options": options or {"temperature": 0},
         }
         try:
             async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
@@ -108,7 +110,11 @@ class OllamaProvider:
             },
             "revision_count": state.get("revision_count", 0),
             "revision_instructions": revision,
+            "target_body_characters": request.target_length,
+            "minimum_body_characters": int(request.target_length * 0.7),
+            "length_feedback": state.get("length_feedback"),
         }
+        output_token_budget = min(8192, max(1024, math.ceil(request.target_length * 1.5)))
         return await self._structured_chat(
             model=self.writer_model,
             system=(
@@ -122,6 +128,7 @@ class OllamaProvider:
             ),
             prompt=f"根据以下可信上下文生成文案：\n{json.dumps(prompt_data, ensure_ascii=False)}",
             response_model=ContentDraft,
+            options={"temperature": 0.2, "num_predict": output_token_budget},
         )
 
     async def check(self, draft: ContentDraft) -> ComplianceResult:

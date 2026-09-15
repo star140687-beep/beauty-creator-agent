@@ -91,6 +91,7 @@ def test_task_market_defaults_to_cn_and_rejects_unknown_market() -> None:
     )
 
     assert request.market == "CN"
+    assert request.target_length == 800
     with pytest.raises(ValidationError):
         TaskCreate.model_validate(
             {
@@ -98,5 +99,17 @@ def test_task_market_defaults_to_cn_and_rejects_unknown_market() -> None:
                 "platform": "xiaohongshu",
                 "objective": "Generate a post",
                 "market": "XX",
+            }
+        )
+
+
+def test_task_rejects_an_unsafe_or_unreasonable_target_length() -> None:
+    with pytest.raises(ValidationError):
+        TaskCreate.model_validate(
+            {
+                "product": {"name": "A moisturizer"},
+                "platform": "xiaohongshu",
+                "objective": "Generate a post",
+                "target_length": 100,
             }
         )

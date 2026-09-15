@@ -10,6 +10,7 @@ st.set_page_config(page_title="Beauty Creator Agent", layout="wide")
 st.title("Beauty Creator Agent")
 
 with st.form("create-task"):
+    target_length = st.slider("正文目标长度（中文字符）", 200, 5000, 800, step=100)
     brand = st.text_input("品牌")
     product = st.text_input("产品名称")
     market = st.selectbox("投放市场", ["CN", "US", "EU"], index=0)
@@ -25,6 +26,7 @@ if submitted:
         "market": market,
         "objective": objective,
         "audience": audience or None,
+        "target_length": target_length,
     }
     response = httpx.post(f"{API_URL}/v1/tasks", json=payload, timeout=30)
     response.raise_for_status()

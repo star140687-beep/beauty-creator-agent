@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     ollama_keep_alive: str = "15m"
     embedding_model: str | None = None
     embedding_dim: int | None = Field(default=None, gt=0)
-    max_revision_count: int = Field(default=2, ge=0, le=10)
+    max_revision_count: int = Field(default=1, ge=0, le=10)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     trend_provider: str = "none"
 

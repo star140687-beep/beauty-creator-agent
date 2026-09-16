@@ -30,9 +30,9 @@ class OllamaProvider:
         self,
         *,
         base_url: str = "http://127.0.0.1:11434",
-        planner_model: str = "qwen2.5:14b",
+        planner_model: str = "llama3.2:3b",
         writer_model: str = "qwen2.5:14b",
-        compliance_model: str = "qwen2.5:14b",
+        compliance_model: str = "llama3.2:3b",
         keep_alive: str = "15m",
         timeout_seconds: float = 180.0,
     ) -> None:
@@ -60,7 +60,7 @@ class OllamaProvider:
                 {
                     "role": "user",
                     "content": (
-                        f"{prompt}\n\n严格按以下 JSON Schema 输出：\n"
+                        f"{prompt}\n\n严格按照以下 JSON Schema 输出：\n"
                         f"{json.dumps(schema, ensure_ascii=False)}"
                     ),
                 },
@@ -74,9 +74,6 @@ class OllamaProvider:
             async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.post(f"{self.base_url}/api/chat", json=payload)
                 if response.is_server_error:
-                    # Some Ollama model builds reject complex JSON Schema, while
-                    # still supporting JSON mode. Keep Pydantic validation below
-                    # as the application-level contract enforcement.
                     fallback_payload = {**payload, "format": "json"}
                     response = await client.post(
                         f"{self.base_url}/api/chat", json=fallback_payload
@@ -91,7 +88,7 @@ class OllamaProvider:
         return await self._structured_chat(
             model=self.planner_model,
             system=(
-                "你是美妆内容工作流的 Planner。只负责识别意图与选择研究、写作、合规节点；"
+                "你是美妆内容工作流的 Planner。只负责识别意图并选择研究、写作和合规节点；"
                 "不要撰写文案，不要虚构事实。"
             ),
             prompt=f"分析以下任务并给出结构化路由：\n{request.model_dump_json(indent=2)}",
@@ -103,6 +100,8 @@ class OllamaProvider:
         evidence = [item.model_dump(mode="json") for item in state.get("evidence", [])]
         compliance = state.get("compliance_result")
         revision = compliance.revision_instructions if compliance else []
+        previous_draft = state.get("current_draft")
+        minimum_length = int(request.target_length * 0.6)
         prompt_data = {
             "request": request.model_dump(mode="json"),
             "evidence": evidence,
@@ -111,27 +110,40 @@ class OllamaProvider:
                 "claim_type": "product_fact",
                 "source_ids": ["user_product_input"],
             },
+            "user_description_policy": (
+                "user_product_description 可支持与原文直接一致的普通产品描述，"
+                "但必须注明来自用户提供资料，不得升级为医疗、绝对化或量化功效。"
+            ),
             "revision_count": state.get("revision_count", 0),
             "revision_instructions": revision,
             "target_body_characters": request.target_length,
-            "minimum_body_characters": int(request.target_length * 0.7),
+            "minimum_body_characters": minimum_length,
             "length_feedback": state.get("length_feedback"),
+            "previous_draft": (
+                previous_draft.model_dump(mode="json") if previous_draft is not None else None
+            ),
+            "length_policy": (
+                "正文长度是明确要求。使用有变化的段落、场景、步骤和克制表达达到长度；"
+                "不得重复句子，也不得为了凑字数添加无证据事实。"
+            ),
+            "expansion_policy": (
+                "若 previous_draft 不为空，必须保留其中合规且有证据的内容，"
+                "在其基础上扩写，并返回完整的替换版正文，而不是只返回新增片段。"
+            ),
         }
         output_token_budget = min(8192, max(1024, math.ceil(request.target_length * 1.5)))
         return await self._structured_chat(
             model=self.writer_model,
             system=(
-                "你是小红书美妆内容 Writer。user_product_name 只能证明输入的产品名称；"
-                "external_search 是未核实的第三方/众包信息，"
-                "不能证明功效、成分、适用肤质或使用结果。"
-                "只有 source_type=official 且原文直接支持的具体事实才可写成其他 product_fact。"
-                "不能由产品名称推测功效，不能伪造亲身体验，也不能把品类洞察冒充该产品反馈。"
-                "当没有官方证据时，正文只写中性、非事实性介绍；claims 只放提供的"
-                " allowed_identity_claim，text 和 source_ids 都要逐字一致，不要加额外事实 claim。"
+                "你是小红书美妆内容 Writer。产品名称只能证明名称本身。"
+                "用户提供的产品描述可作为未核验 brief 使用，仅支持与原文直接一致的普通描述；"
+                "不得据此生成医疗、绝对化、量化功效或安全保证。第三方众包资料不能证明功效。"
+                "只有官方证据可支持额外明确功效。所有事实 claim 必须引用对应 source_id。"
+                "在这些边界内充分展开生活场景、内容结构、使用步骤和主观表达。"
             ),
-            prompt=f"根据以下可信上下文生成文案：\n{json.dumps(prompt_data, ensure_ascii=False)}",
+            prompt=f"根据以下上下文生成结构化文案：\n{json.dumps(prompt_data, ensure_ascii=False)}",
             response_model=ContentDraft,
-            options={"temperature": 0.2, "num_predict": output_token_budget},
+            options={"temperature": 0.3, "num_predict": output_token_budget},
         )
 
     async def check(self, draft: ContentDraft) -> ComplianceResult:
@@ -142,7 +154,7 @@ class OllamaProvider:
                 "无来源产品事实和误导表达。只返回 risk_detected、uncertain、trigger。"
                 "有疑问则 uncertain=true；无风险时 trigger 为空。"
             ),
-            prompt=f"审查以下文案与 claims：\n{draft.model_dump_json(indent=2)}",
+            prompt=f"审查以下文案和 claims：\n{draft.model_dump_json(indent=2)}",
             response_model=SemanticScreen,
         )
         if not screen.risk_detected and not screen.uncertain:
@@ -153,14 +165,14 @@ class OllamaProvider:
                 ComplianceIssue(
                     code="SEMANTIC_RISK" if screen.risk_detected else "SEMANTIC_UNCERTAIN",
                     category="semantic_review",
-                    severity="high",
+                    severity="high" if screen.risk_detected else "medium",
                     message=(
                         "Semantic risk detected"
                         if screen.risk_detected
-                        else "Semantic review uncertain"
+                        else "Semantic review uncertain; route to human review"
                     ),
                     claim_text=screen.trigger.strip() or None,
                 )
             ],
-            revision_instructions=["删除或改写模型标记的高风险表达，并复核对应证据"],
+            revision_instructions=["删除或改写模型标记的高风险表达，并复核对应证据。"],
         )

@@ -45,7 +45,7 @@ async def test_ollama_planner_uses_schema_constrained_output() -> None:
 
     assert result == decision
     request_payload = json.loads(route.calls.last.request.content)
-    assert request_payload["model"] == "qwen2.5:14b"
+    assert request_payload["model"] == "llama3.2:3b"
     assert request_payload["stream"] is False
     assert request_payload["format"]["title"] == "PlannerDecision"
 
@@ -154,5 +154,24 @@ async def test_writer_marks_crowdsourced_records_unverified() -> None:
 
     assert result == draft
     payload = json.loads(route.calls.last.request.content)
-    assert "external_search 是未核实" in payload["messages"][0]["content"]
+    assert "第三方众包资料不能证明功效" in payload["messages"][0]["content"]
     assert '"allowed_identity_claim"' in payload["messages"][1]["content"]
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_writer_receives_previous_draft_for_length_expansion() -> None:
+    previous = ContentDraft(title="Draft", body="Short starting body.")
+    replacement = ContentDraft(title="Draft", body="Expanded replacement body.")
+    route = respx.post("http://127.0.0.1:11434/api/chat").mock(
+        return_value=httpx.Response(
+            200, json={"message": {"content": replacement.model_dump_json()}}
+        )
+    )
+
+    result = await OllamaProvider().write({"request": task(), "current_draft": previous})
+
+    assert result == replacement
+    prompt = json.loads(route.calls.last.request.content)["messages"][1]["content"]
+    assert "previous_draft" in prompt
+    assert previous.body in prompt

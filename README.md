@@ -15,7 +15,7 @@ The default local setup uses `qwen2.5:14b` for writing and `llama3.2:3b` for pla
 ```text
 Request → Planner → Research Tools → Evidence → Writer → Compliance
                                                 ↑          │
-                                                └─ Revision┘ (max 2)
+                                                └─ Revision┘ (max 1 by default)
                                                            ↓
                                                   Human Review → Final
 ```

@@ -63,6 +63,34 @@ async def test_supported_safe_claim_passes() -> None:
 
 
 @pytest.mark.asyncio
+async def test_user_description_can_support_matching_non_medical_product_fact() -> None:
+    user_description = EvidenceItem(
+        id="user_product_description",
+        evidence_type="product_fact",
+        source_type="user_input",
+        source_id="user_product_description",
+        content="The texture is a lightweight cream.",
+        reliability="medium",
+    )
+    draft = ContentDraft(
+        title="Product",
+        body="The texture is a lightweight cream.",
+        claims=[
+            GeneratedClaim(
+                text="The texture is a lightweight cream.",
+                claim_type="product_fact",
+                source_ids=["user_product_description"],
+            )
+        ],
+    )
+
+    result = await ComplianceSystem(FakeLLMProvider()).check(draft, [user_description])
+
+    assert result.status == "pass"
+    assert result.claim_verifications[0].status == "supported"
+
+
+@pytest.mark.asyncio
 async def test_unlisted_product_fact_in_body_fails_closed() -> None:
     name = "Jergens Original Scent Dry Skin Moisturizer"
     name_evidence = EvidenceItem(

@@ -50,11 +50,12 @@ class WorkflowNodes:
         writer_state = dict(state)
         writer_state["revision_count"] = revision_count
         draft = await self.provider.write(writer_state)  # type: ignore[arg-type]
-        minimum_length = int(state["request"].target_length * 0.7)
+        minimum_length = int(state["request"].target_length * 0.6)
         length_retry_count = 0
-        if len(draft.body.strip()) < minimum_length:
+        if not is_revision and len(draft.body.strip()) < minimum_length:
             length_retry_count = 1
             writer_state["length_retry_count"] = length_retry_count
+            writer_state["current_draft"] = draft
             writer_state["length_feedback"] = (
                 f"The previous body has {len(draft.body.strip())} characters. "
                 f"Expand it to at least {minimum_length} characters "
@@ -66,8 +67,7 @@ class WorkflowNodes:
                 update={
                     "warnings": [
                         *draft.warnings,
-                        "LENGTH_TARGET_NOT_MET: body remained below the requested minimum "
-                        "after one retry.",
+                        "未达到目标长度：模型扩写一次后，正文仍低于设定的最低长度。",
                     ]
                 }
             )

@@ -100,7 +100,7 @@ class ComplianceSystem:
                 text = text.replace(name, "")
         checks = verifications if verifications is not None else self.verify_claims(draft, evidence)
         known = {item.source_id: item for item in evidence if item.source_id}
-        supported_official_claims = [
+        supported_prose_claims = [
             claim.text.casefold()
             for claim, check in zip(draft.claims, checks, strict=True)
             if check.status == "supported"
@@ -108,7 +108,10 @@ class ComplianceSystem:
             and claim.source_ids
             and all(
                 known.get(source_id) is not None
-                and known[source_id].source_type == "official"
+                and (
+                    known[source_id].source_type == "official"
+                    or known[source_id].id == "user_product_description"
+                )
                 for source_id in claim.source_ids
             )
         ]
@@ -116,14 +119,14 @@ class ComplianceSystem:
             before = re.split(r"[。！？!?；;，,\n.]", text[: match.start()])[-1]
             after = re.split(r"[。！？!?；;，,\n.]", text[match.end() :])[0]
             clause = f"{before}{match.group(0)}{after}".strip().casefold()
-            if clause in supported_official_claims:
+            if any(claim in clause or clause in claim for claim in supported_prose_claims):
                 continue
             return [
                 ComplianceIssue(
                     code="PROSE_FACT_UNVERIFIED",
                     category="claim_coverage",
                     severity="high",
-                    message="Fact-like prose lacks a directly supported official product claim",
+                    message="Fact-like prose lacks directly matching allowed product evidence",
                     claim_text=match.group(0),
                     source_basis="Internal conservative claim-coverage policy",
                     regulatory_source_id="internal-claim-coverage-policy",
@@ -139,6 +142,8 @@ class ComplianceSystem:
             if item.evidence_type != "product_fact":
                 return False
             if item.source_type == "official":
+                return text in content
+            if item.source_type == "user_input" and item.id == "user_product_description":
                 return text in content
             if item.source_type == "user_input" and item.id == "user_product_name":
                 name = content.split("：", 1)[-1].strip()

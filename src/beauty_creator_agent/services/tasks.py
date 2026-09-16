@@ -10,6 +10,7 @@ from langgraph.types import Command
 
 from beauty_creator_agent.agents.base import ModelProvider
 from beauty_creator_agent.agents.factory import get_model_provider
+from beauty_creator_agent.core.config import get_settings
 from beauty_creator_agent.graph.builder import build_graph
 from beauty_creator_agent.graph.state import MarketingState
 from beauty_creator_agent.schemas.api import ReviewRequest, TaskView, WorkflowEvent
@@ -34,9 +35,14 @@ class TaskManager:
         self,
         provider: ModelProvider | None = None,
         checkpointer: BaseCheckpointSaver[str] | None = None,
+        max_revision_count: int | None = None,
     ) -> None:
-        self.provider = provider or get_model_provider()
+        settings = get_settings()
+        self.provider = provider or get_model_provider(settings)
         self.checkpointer = checkpointer or InMemorySaver()
+        self.max_revision_count = (
+            settings.max_revision_count if max_revision_count is None else max_revision_count
+        )
         self.tasks: dict[str, RuntimeTask] = {}
 
     def create(self, request: TaskCreate) -> RuntimeTask:
@@ -49,7 +55,10 @@ class TaskManager:
     async def run(self, task_id: str) -> RuntimeTask:
         task = self.require(task_id)
         task.graph = build_graph(
-            self.provider, enable_interrupts=True, checkpointer=self.checkpointer
+            self.provider,
+            max_revision_count=self.max_revision_count,
+            enable_interrupts=True,
+            checkpointer=self.checkpointer,
         )
         config = RunnableConfig(configurable={"thread_id": task.thread_id})
         initial: MarketingState = {
@@ -100,7 +109,12 @@ class TaskManager:
 
     async def recover(self, task_id: str) -> RuntimeTask:
         """Rebuild runtime metadata from a persistent LangGraph checkpoint."""
-        graph = build_graph(self.provider, enable_interrupts=True, checkpointer=self.checkpointer)
+        graph = build_graph(
+            self.provider,
+            max_revision_count=self.max_revision_count,
+            enable_interrupts=True,
+            checkpointer=self.checkpointer,
+        )
         config = RunnableConfig(configurable={"thread_id": task_id})
         snapshot = await graph.aget_state(config)
         if not snapshot.values or "request" not in snapshot.values:

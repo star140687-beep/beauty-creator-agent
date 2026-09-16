@@ -9,7 +9,7 @@ from beauty_creator_agent.schemas.compliance import (
 from beauty_creator_agent.schemas.content import ContentDraft, GeneratedClaim
 from beauty_creator_agent.schemas.evidence import EvidenceContext, EvidenceItem
 from beauty_creator_agent.schemas.planner import PlannerDecision
-from beauty_creator_agent.schemas.task import ProductInput, TaskCreate
+from beauty_creator_agent.schemas.task import ProductInput, TaskCreate, UploadedReference
 
 __all__ = [
     "ClaimVerification",
@@ -23,4 +23,5 @@ __all__ = [
     "Platform",
     "ProductInput",
     "TaskCreate",
+    "UploadedReference",
 ]

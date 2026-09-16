@@ -4,6 +4,8 @@ import os
 import httpx
 import streamlit as st
 
+from beauty_creator_agent.services.documents import DocumentExtractionError, extract_reference
+
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 TERMINAL_STATUSES = {"awaiting_human_review", "completed", "rejected", "failed"}
 
@@ -11,6 +13,16 @@ st.set_page_config(page_title="Beauty Creator Agent", layout="wide")
 st.title("Beauty Creator Agent")
 
 with st.form("create-task"):
+    uploaded_file = st.file_uploader("上传需求或产品资料（PDF、DOCX、TXT、MD；最大 10 MB）")
+    upload_role = st.selectbox(
+        "文件用途",
+        options=["brief", "product_material", "existing_content"],
+        format_func={
+            "brief": "内容需求 Brief（只影响写作要求）",
+            "product_material": "产品资料（作为待核验材料）",
+            "existing_content": "已有文案（用于改写参考）",
+        }.get,
+    )
     brand = st.text_input("品牌")
     product = st.text_input("产品名称")
     market = st.selectbox("投放市场", ["CN", "US", "EU"], index=0)
@@ -21,6 +33,18 @@ with st.form("create-task"):
     submitted = st.form_submit_button("开始生成")
 
 if submitted:
+    uploaded_references: list[dict[str, object]] = []
+    if uploaded_file is not None:
+        try:
+            reference = extract_reference(
+                filename=uploaded_file.name,
+                data=uploaded_file.getvalue(),
+                role=upload_role,
+            )
+            uploaded_references.append(reference.model_dump())
+        except DocumentExtractionError as exc:
+            st.error(f"无法读取上传文件：{exc}")
+            st.stop()
     payload = {
         "product": {"brand": brand or None, "name": product, "description": description or None},
         "platform": "xiaohongshu",
@@ -28,6 +52,7 @@ if submitted:
         "objective": objective,
         "audience": audience or None,
         "target_length": target_length,
+        "uploaded_references": uploaded_references,
     }
     try:
         response = httpx.post(f"{API_URL}/v1/tasks", json=payload, timeout=30)

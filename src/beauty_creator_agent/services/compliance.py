@@ -111,6 +111,7 @@ class ComplianceSystem:
                 and (
                     known[source_id].source_type == "official"
                     or known[source_id].id == "user_product_description"
+                    or known[source_id].metadata.get("upload_role") == "product_material"
                 )
                 for source_id in claim.source_ids
             )
@@ -143,7 +144,10 @@ class ComplianceSystem:
                 return False
             if item.source_type == "official":
                 return text in content
-            if item.source_type == "user_input" and item.id == "user_product_description":
+            if item.source_type == "user_input" and (
+                item.id == "user_product_description"
+                or item.metadata.get("upload_role") == "product_material"
+            ):
                 return text in content
             if item.source_type == "user_input" and item.id == "user_product_name":
                 name = content.split("：", 1)[-1].strip()

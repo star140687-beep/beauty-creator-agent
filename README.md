@@ -114,6 +114,20 @@ http://127.0.0.1:11434
 
 with `qwen2.5:14b` available.
 
+### Optional reference file upload
+
+The Streamlit form accepts one PDF, DOCX, TXT, or Markdown file up to 10 MB. The original
+file is parsed only for the current task and is never saved to disk, logs, or Git. Its bounded
+extracted text becomes task state and therefore follows the configured checkpoint backend.
+Choose its purpose before generation:
+
+* **Content Brief** guides tone, structure, audience, and length only.
+* **Product Material** becomes traceable user-provided evidence with a SHA-256 `source_id`;
+  it is not automatically treated as official proof of efficacy.
+* **Existing Content** is a rewrite reference only.
+
+Scanned/image-only PDFs need OCR and are intentionally rejected in this version.
+
 ## API
 
 | Method | Endpoint                      | Purpose                                |

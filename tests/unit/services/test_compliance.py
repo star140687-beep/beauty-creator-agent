@@ -91,6 +91,34 @@ async def test_user_description_can_support_matching_non_medical_product_fact() 
 
 
 @pytest.mark.asyncio
+async def test_uploaded_product_material_can_support_only_matching_product_fact() -> None:
+    uploaded = EvidenceItem(
+        id="upload:0123456789abcdef",
+        evidence_type="product_fact",
+        source_type="user_input",
+        source_id="upload:0123456789abcdef",
+        content="<untrusted_document>Contains ceramides.</untrusted_document>",
+        reliability="medium",
+        metadata={"upload_role": "product_material"},
+    )
+    draft = ContentDraft(
+        title="Product",
+        body="Contains ceramides.",
+        claims=[
+            GeneratedClaim(
+                text="Contains ceramides",
+                claim_type="product_fact",
+                source_ids=["upload:0123456789abcdef"],
+            )
+        ],
+    )
+
+    result = await ComplianceSystem(FakeLLMProvider()).check(draft, [uploaded])
+
+    assert result.status == "pass"
+
+
+@pytest.mark.asyncio
 async def test_unlisted_product_fact_in_body_fails_closed() -> None:
     name = "Jergens Original Scent Dry Skin Moisturizer"
     name_evidence = EvidenceItem(

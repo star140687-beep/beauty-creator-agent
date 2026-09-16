@@ -80,6 +80,25 @@ class ResearchService:
                     reliability="medium",
                 )
             )
+        for reference in request.uploaded_references:
+            if reference.role != "product_material":
+                continue
+            evidence.append(
+                EvidenceItem(
+                    id=reference.source_id,
+                    evidence_type="product_fact",
+                    source_type="user_input",
+                    source_id=reference.source_id,
+                    content=reference.content,
+                    reliability="medium",
+                    metadata={
+                        "upload_role": reference.role,
+                        "media_type": reference.media_type,
+                        "sha256": reference.sha256,
+                        "size_bytes": reference.size_bytes,
+                    },
+                )
+            )
         query = request.product.name
         product_rows: list[dict[str, Any]] = []
         if plan.needs_product_research or plan.needs_content_research:
